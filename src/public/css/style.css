@@ -1,0 +1,90 @@
+body {
+    background: #333333;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #dd1818, #333333);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to left, #dd1818, #333333); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+p, h1, h2, h3, h4, h5, h6, label, a, small {
+    font-family: 'Tw cen MT Condensed', 'Tw cen MT Condensed Bold';
+}
+h1{
+    font-size: 75px;
+}
+h2{
+    font-size: 70px;
+    padding-top: 12px;
+}
+h3{
+    font-size: 60px;
+}
+p{
+    font-size: 40px;
+}
+label{
+    font-size: 30px;
+}
+
+img{
+    size: 50px;
+}
+.cap{
+    height: 375px;
+}
+a, a:hover, a:active{
+    color: #dd1818;
+    text-decoration: none;
+    font-size: 30px
+}
+.modal-title {
+    color: black;
+    font-size: 40px;
+}
+button > a, a:hover, a:active{
+    color: white;
+}
+
+.btn-danger, .btn-danger:hover, .btn-danger:active, .btn-primary, .btn-primary:hover, .btn-primary:active{
+    background-color: #dd1818;
+    font-family: 'Tw cen MT Condensed', 'Tw cen MT Condensed Bold';
+    font-size: 20px;
+    border-color: #dd1818;
+}
+.content {
+    background-color: gainsboro;
+    padding: 0;
+    border: 0px;
+    text-align: center;
+    -webkit-box-shadow: 6px 7px 14px -5px rgba(0,0,0,0.75);
+    -moz-box-shadow: 6px 7px 14px -5px rgba(0,0,0,0.75);
+    box-shadow: 6px 7px 14px -5px rgba(0,0,0,0.75);
+}
+
+.panel1{
+    background-image: url('/img/2.png');
+    background-size: cover;
+}
+
+.panel2{
+    background-image: url('/img/1.png');
+    background-size: cover;
+}
+
+.panel3{
+    background-image: url('/img/3.png');
+    background-size: cover;
+}
+
+.title{
+    color:white;
+}
+.logo{
+    background-color: #dd1818;
+    text-align: center;
+    border-radius: 5px 0px 0px 5px;
+    padding: 10px;
+    z-index: 1000;
+    color: white;
+}
+li{
+    list-style: none;
+}

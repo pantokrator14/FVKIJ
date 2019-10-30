@@ -1,0 +1,26 @@
+<div class="col-md-4 mx-auto">
+  <div class="card">
+    <div class="card-header">
+      <h3>Editar información de equipo</h3>
+    </div>
+    <div class="card-body">
+      <form action="/notes/edit-note/{{asignacion._id}}?_method=PUT" method="POST">
+        <input type="hidden" name="_method" value="PUT">
+        <div class="form-group">
+          <input type="text" name="tipo" class="form-control" value="{{asignacion.tipo}}"/>
+        </div>
+        <div class="form-group">
+          <input type="text" name="responsable" class="form-control">{{asignacion.responsable}}/>
+        </div>
+        <div class="form-group">
+          <input type="text" name="descripcion" class="form-control">{{asignacion.descripcion}}/>
+        </div>
+        <div class="form-group">
+          <button class="btn btn-primary btn-block" type="submit">
+            <i class="fas fa-edit"></i>  Actualizar informacion
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

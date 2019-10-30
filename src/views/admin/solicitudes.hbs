@@ -1,0 +1,110 @@
+<div class="row">
+    <div class="col-sm-12 col-md-3 bg-dark">
+        
+        <div class="card-body">
+            <nav class="navbar flex-column">
+                <a class="navbar-brand" href="#" style="margin-left: 35px">
+                    <img src="/img/FVK.png" width="150" height="150" class="d-inline-block align-top" alt="Logo FVK." title="Logo Federación Venezolana de Kendo Iaido & Jodo.">
+                </a>
+                <br>
+                <br>
+                <li class="nav-item">
+                    <a href="/FVK/init" class="nav-link"><i class="fa fa-home"></i>  Inicio</a>
+                </li>
+                <br>
+                <br>
+                <li class="nav-item">
+                    <a href="/FVK/list" class="nav-link"><i class="fa fa-address-card"></i>  Dojos</a>
+                </li>
+                <br>
+                <br>
+                <li class="nav-item">
+                    <a href="/FVK/asignaciones" class="nav-link"><i class="fas fa-box-open"></i>  Asignaciones</a>
+                </li>
+                <br>
+                <br>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-credit-card"></i>  Tesorería</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="/FVK/ingresos"><i class="fas fa-piggy-bank"></i>  Ingresos</a>
+                            <a class="dropdown-item" href="/FVK/egresos"><i class="fas fa-hand-holding-usd"></i>  Egresos</a>
+                        </div>
+                </li> 
+                <br>
+                <br>
+                <li class="nav-item">
+                    <a href="/FVK/solicitudes" class="nav-link"><i class="fas fa-plus-circle"></i>  Nuevos ingresos</a>
+                </li>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <li class="nav-item">
+                    <button type="button" class="btn btn-outline-danger">
+                        <a href="/admin/logout" class="nav-link "><i class="fas fa-sign-out-alt"></i>  Cerrar Sesión</a>
+                    </button>
+                </li>
+            </nav>
+        </div>
+    </div>
+
+
+
+
+
+    <!--Aquí va el contenido-->
+
+    <div class="col-sm-12 col-md-9 content">
+        <div class="card-head">
+            <br>
+            <h1><i class="fa fa-address-card"></i>  Dojos</h1>
+        </div>
+        <div class="card-body">
+            <hr>
+            <h3>Listado de dojos activos</h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">RIF</th>
+                        <th scope="col">Dirección</th>
+                        <th scope="col">Responsable</th>
+                        <th scope="col">Artes Marciales</th>
+                        <th scope="col">    </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each newDojo}}
+                            <tr>
+                                <th scope="row"> {{DojoName}} </th>
+                                <td> {{DojoRIF}} </td>
+                                <td> {{DojoAddress}} </td>
+                                <td> {{FounderName}} </td>
+                                <td> {{artes}} </td>
+                                <td class="d-flex justify-content-between align-items-center"> <!--En caso de no funcionar esto, cambiar. Lo mismo para abajo.-->
+                                    <form action="/dojo/acceso/{{_id}}?_method=PUT" method="POST">
+                                        <input type="hidden" name="_method" value="PUT">
+                                        <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-check-circle"></i></button>
+                                    </form>
+                                    <form action="/dojo/delete/{{_id}}?_method=DELETE" method="POST">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button> 
+                                    </form>
+                                </td>
+                            </tr>
+                        {{else}}
+                            <tr>
+                                <th scope="row" colspan="7" >
+                                No hay ningun dojo solicitando autenticación en este momento.
+                                </th>
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

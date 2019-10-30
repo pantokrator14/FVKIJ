@@ -1,0 +1,288 @@
+<div class="row">
+    <div class="col-sm-12 col-md-3 bg-dark">
+        
+        <div class="card-body">
+            <nav class="navbar flex-column">
+                <a class="navbar-brand" href="#" style="margin-left: 35px">
+                    <img src="/img/FVK.png" width="150" height="150" class="d-inline-block align-top" alt="Logo FVK." title="Logo Federación Venezolana de Kendo Iaido & Jodo.">
+                </a>
+                <br>
+                <br>
+                <li class="nav-item">
+                    <a href="/dojos/init" class="nav-link"><i class="fa fa-home"></i>  Inicio</a>
+                </li>
+                <br>
+                <br>
+                <li class="nav-item">
+                    <a href="/dojos/members" class="nav-link"><i class="fa fa-address-card"></i>  Membresía</a>
+                </li>
+                <br>
+                <br>
+                <li class="nav-item">
+                    <a href="/dojo/config/{{_id}}" class="nav-link"><i class="fas fa-cog"></i>  Configuracion</a>
+                </li>
+                <br>
+                <br>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-credit-card"></i>  Tesorería</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="/dojos/ingresos"><i class="fas fa-piggy-bank"></i>  Ingresos</a>
+                            <a class="dropdown-item" href="/dojos/egresos"><i class="fas fa-hand-holding-usd"></i>  Egresos</a>
+                        </div>
+                </li> 
+                <br>
+                <br>
+                <li class="nav-item">
+                    <a href="#" class="nav-link disabled"><i class="fa fa-question-circle"></i>  No sé qué poner aquí</a>
+                </li>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <li class="nav-item">
+                    <button type="button" class="btn btn-outline-danger">
+                        <a href="/dojos/logout" class="nav-link "><i class="fas fa-sign-out-alt"></i>  Cerrar Sesión</a>
+                    </button>
+                </li>
+            </nav>
+        </div>
+    </div>
+
+
+
+
+
+    <!--Aquí va el contenido-->
+
+    <div class="col-sm-12 col-md-9 content">
+        <div class="card-head">
+            <br>
+            <h1><i class="fa fa-address-card"></i>  Miembros del dojo</h1>
+        </div>
+        <div class="card-body">
+            <hr>
+                <div class="row container justify-content-end">
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">
+                    <i class="fa fa-user-plus"></i>  Ingresar nuevo usuario
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" class="container">
+                        <div class="modal-dialog" role="document" class="reverse">
+                            <div class="modal-content container content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title col-sm-12">Formulario de ingreso</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="/dojos/members/ingreso" method="POST">
+                                        <div class="row ">
+                                            <div class="form-group col-sm-12 col-md-6">
+                                                <label for="">Nombre completo</label>
+                                                <input type="text" class="form-control" name="nombre" autofocus>
+                                            </div>
+                                            <div class="form-group col-sm-12 col-md-6">
+                                                <label for="">Cedula de Identidad</label>
+                                                <input type="number" class="form-control" name="cedula" placeholder="00000000">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-sm-12 col-md-6">
+                                                <label for="">Correo electronico</label>
+                                                <input type="email" name="email" placeholder="nombre@ejemplo.com" class="form-control">
+                                            </div>
+                                            <div class="form-group col-sm-12 col-md-6">
+                                                <label for="">Fecha de nacimiento</label>
+                                                <input type="date" name="fechaNacimiento" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-sm-12 col-md-6">
+                                                <label for="">Contraseña</label>
+                                                <input type="password" name="contraseña" class="form-control">
+                                            </div>
+                                            <div class="form-group col-sm-12 col-md-6">
+                                                <label for="">Confirmar contraseña</label>
+                                                <input type="password" name="confirmacion" class="form-control">
+                                            </div>
+                                            <small id="emailHelp" class="form-text text-muted col-sm-12">La contraseña debe tener entre 6 y 12 caracteres.</small>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-sm-12 col-md-6">
+                                                <label for="">Peso (Kg)</label>
+                                                <input type="number" name="peso" placeholder="00" class="form-control">
+                                            </div>
+                                            <div class="form-group col-sm-12 col-md-6">
+                                                <label for="">Altura (cms)</label>
+                                                <input type="number" name="altura" class="form-control" placeholder="000">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-sm-12">
+                                                <label for="genero">Género</label>
+                                                <br>
+                                                <div class=" form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="genero" id="inlineRadio1" value="Masculino">
+                                                    <label class="form-check-label" for="inlineRadio1">Masculino</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="genero" id="inlineRadio2" value="Femenino">
+                                                    <label class="form-check-label" for="inlineRadio1">Femenino</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-sm-12 col-sm-6">
+                                                <label for="">Direccion</label>
+                                                <input type="text" name="direccion" placeholder="Casa, calle, ciudad, estado." class="form-control">
+                                            </div>
+                                            <div class="form-group col-sm-12 col-sm-6">
+                                                <label for="">Grado</label>
+                                                <select name="grado" id="" class="form-control">
+                                                    <option value="ninguno">n/a</option>
+                                                    <option value="6to kyu">六級・6to Kyu</option>
+                                                    <option value="5to kyu">五級・5to Kyu</option>
+                                                    <option value="4to kyu">四級・4to Kyu</option>
+                                                    <option value="3er kyu">三級・3er Kyu</option>
+                                                    <option value="2do kyu">二級・2do kyu</option>
+                                                    <option value="1er kyu">一級・1er kyu</option>
+                                                    <option value="1er dan">一段・1er dan</option>
+                                                    <option value="2do dan">二段・2do dan</option>
+                                                    <option value="3er dan">三段・3er dan</option>
+                                                    <option value="4to dan">四段・4to dan</option>
+                                                    <option value="5to dan">五段・5to dan</option>
+                                                    <option value="6to dan">六段・6to dan</option>
+                                                    <option value="7mo dan">七段・7mo dan</option>
+                                                    <option value="8vo dan">八段・8vo dan</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <button type="submit" class="btn btn-primary"><i class="fa fa-user-plus"></i>Ingresar usuario</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <hr>
+
+            {{#each errors}}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{text}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {{/each}}
+
+            <h3>Listado de miembros activos</h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                        <th scope="col">Nombre completo</th>
+                        <th scope="col">Cédula de identidad</th>
+                        <th scope="col">Género</th>
+                        <th scope="col">Altura (mts)</th>
+                        <th scope="col">Peso (kg)</th>
+                        <th scope="col">Fecha de Nacimiento</th>
+                        <th scope="col">Correo electrónico</th>
+                        <th scope="col">Dirección</th>
+                        <th scope="col">Grado</th>
+                        <th scope="col">    </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each activeUser}}
+                            <tr>
+                                <th scope="row"> {{nombre}} </th>
+                                <td> {{cedula}} </td>
+                                <td> {{genero}} </td>
+                                <td> {{tamaño}} </td>
+                                <td> {{peso}} </td>
+                                <td> {{fechaNacimiento}} </td>
+                                <td> {{email}} </td>
+                                <td> {{direccion}} </td>
+                                <td> {{grado}} </td>
+                                <td class="d-flex justify-content-between align-items-center"> <!--Esta clase es para alinear, si no funciona, cambiar. Lo mismo para el de abajo-->
+                                    <form action="/miembro/insolvencia/{{_id}}?_method=PUT" method="POST">
+                                        <input type="hidden" name="_method" value="PUT">
+                                        <button type="submit" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></button>
+                                    </form>
+                                    <form action="/miembro/delete/{{_id}}?_method=DELETE" method="POST">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button> 
+                                    </form>
+                                </td>
+                            </tr>
+                        {{else}}
+                            <tr>
+                                <th scope="row" colspan="10" >
+                                No hay miembros registrados aún.
+                                </th>
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            <hr>
+            <br>
+            <h3>Listado de miembros inactivos</h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Nombre completo</th>
+                            <th scope="col">Cédula de identidad</th>
+                            <th scope="col">Género</th>
+                            <th scope="col">Altura (mts)</th>
+                            <th scope="col">Peso (kg)</th>
+                            <th scope="col">Fecha de Nacimiento</th>
+                            <th scope="col">Correo electrónico</th>
+                            <th scope="col">Dirección</th>
+                            <th scope="col">Grado</th>
+                            <th scope="col">    </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each insolvente}}
+                            <tr>
+                                <th scope="row"> {{nombre}} </th>
+                                <td> {{cedula}} </td>
+                                <td> {{genero}} </td>
+                                <td> {{tamaño}} </td>
+                                <td> {{peso}} </td>
+                                <td> {{fechaNacimiento}} </td>
+                                <td> {{email}} </td>
+                                <td> {{direccion}} </td>
+                                <td> {{grado}} </td>
+                                <td class="d-flex justify-content-between align-items-center">
+                                    <form action="/miembro/solvencia/{{_id}}?_method=PUT" method="POST">
+                                        <input type="hidden" name="_method" value="PUT">
+                                        <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-edit"></i></button>
+                                    </form>
+                                    <form action="/miembro/delete/{{_id}}?_method=DELETE" method="POST">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button> 
+                                    </form>
+                                </td>    
+                            </tr>
+                        {{else}}
+                            <tr>
+                                <th scope="row" colspan="10" >
+                                No hay miembros insolventes aún.
+                                </th>
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

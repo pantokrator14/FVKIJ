@@ -1,0 +1,134 @@
+<div class="row">
+    <div class="col-sm-12 col-md-3 bg-dark">
+        
+        <div class="card-body">
+            <nav class="navbar flex-column">
+                <a class="navbar-brand" href="#" style="margin-left: 35px">
+                    <img src="/img/FVK.png" width="150" height="150" class="d-inline-block align-top" alt="Logo FVK." title="Logo Federación Venezolana de Kendo Iaido & Jodo.">
+                </a>
+                <br>
+                <br>
+                <li class="nav-item">
+                    <a href="/kenshi/init" class="nav-link"><i class="fa fa-home"></i>  Inicio</a>
+                </li>
+                <br>
+                <br>
+                <li class="nav-item">
+                    <a href="/config/{{_id}}" class="nav-link"><i class="fas fa-cog"></i>  Configuracion</a>
+                </li>
+                <br>
+                <br>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-stamp"></i>  Certificaciones</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#"><i class="fas fa-file-contract"></i>  Grado</a>
+                            <a class="dropdown-item" href="#"><i class="fas fa-certificate"></i> Cualquier otra</a>
+                        </div>
+                </li> 
+                <br>
+                <br>
+                <li class="nav-item">
+                    <a href="#" class="nav-link disabled"><i class="fa fa-question-circle"></i>  No sé qué poner aquí</a>
+                </li>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <li class="nav-item">
+                    <button type="button" class="btn btn-outline-danger">
+                        <a href="/dojos/logout" class="nav-link "><i class="fas fa-sign-out-alt"></i>  Cerrar Sesión</a>
+                    </button>
+                </li>
+            </nav>
+        </div>
+    </div>
+
+    <!--Aquí va el contenido-->
+
+    <div class="col-sm-12 col-md-9 content">
+        <div class="card-head">
+            <br>
+            <h1><i class="fas fa-cog"></i> Configuracion</h1>
+        </div>
+        <div class="card-body">
+            <form action="/config/edit/{{usuario._id}}?_method=PUT" method="POST">
+                <input type="hidden" name="_method" value="PUT">    
+                <div class="row ">
+                    <div class="form-group col-sm-12 col-md-6">
+                        <label for="">Nombre completo</label>
+                        <input type="text" class="form-control" name="nombre" autofocus value="{{usuario.nombre}}">
+                    </div>
+                    <div class="form-group col-sm-12 col-md-6">
+                        <label for="">Cedula de Identidad</label>
+                        <input type="number" class="form-control" name="cedula" placeholder="00000000" value="{{usuario.cedula}}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-sm-12 col-md-6">
+                        <label for="">Correo electronico</label>
+                        <input type="email" name="email" placeholder="nombre@ejemplo.com" class="form-control" value="{{usuario.email}}">
+                    </div>
+                    <div class="form-group col-sm-12 col-md-6">
+                        <label for="">Fecha de nacimiento</label>
+                        <input type="date" name="fechaNacimiento" class="form-control" value="{{usuario.fechaNacimiento}}">
+                    </div>
+                </div>
+                <div class="row">
+                </div>
+                <div class="row">
+                    <div class="form-group col-sm-12 col-md-6">
+                        <label for="">Peso (Kg)</label>
+                        <input type="number" name="peso" placeholder="00" class="form-control" value="{{usuario.peso}}">
+                    </div>
+                    <div class="form-group col-sm-12 col-md-6">
+                        <label for="">Altura (cms)</label>
+                        <input type="number" name="altura" class="form-control" placeholder="000" value="{{usuario.altura}}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-sm-12">
+                        <label for="genero">Género</label>
+                        <br>
+                        <div class=" form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="genero" id="inlineRadio1" value="Masculino">
+                            <label class="form-check-label" for="inlineRadio1">Masculino</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="genero" id="inlineRadio2" value="Femenino">
+                            <label class="form-check-label" for="inlineRadio1">Femenino</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-sm-12 col-sm-6">
+                        <label for="">Direccion</label>
+                        <input type="text" name="direccion" placeholder="Casa, calle, ciudad, estado." class="form-control" value="{{usuario.direccion}}">
+                    </div>
+                    <div class="form-group col-sm-12 col-sm-6">
+                        <label for="">Grado</label>
+                        <select name="grado" id="" class="form-control">
+                            <option value="ninguno">n/a</option>
+                            <option value="6to kyu">六級・6to Kyu</option>
+                            <option value="5to kyu">五級・5to Kyu</option>
+                            <option value="4to kyu">四級・4to Kyu</option>
+                            <option value="3er kyu">三級・3er Kyu</option>
+                            <option value="2do kyu">二級・2do kyu</option>
+                            <option value="1er kyu">一級・1er kyu</option>
+                            <option value="1er dan">一段・1er dan</option>
+                            <option value="2do dan">二段・2do dan</option>
+                            <option value="3er dan">三段・3er dan</option>
+                            <option value="4to dan">四段・4to dan</option>
+                            <option value="5to dan">五段・5to dan</option>
+                            <option value="6to dan">六段・6to dan</option>
+                            <option value="7mo dan">七段・7mo dan</option>
+                            <option value="8vo dan">八段・8vo dan</option>
+                        </select>
+                    </div>
+                </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-user-edit"></i>  Actualizar datos</button>
+            </form>
+        </div>
+    </div>
+</div>
