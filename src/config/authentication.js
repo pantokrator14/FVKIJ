@@ -22,12 +22,12 @@ passport.use(new EstrategiaLocal({ //Definimos una nueva estrategia de validacio
     }
 }));
 
-//Serializacion de usuario, repasar
+//Serializacion de usuario, toma un dato del usuario para poder registrar la sesion, en este caso es su id.
 passport.serializeUser((usuario, done) => {
     done(null, usuario.id); 
 });
 
-//Deserializacion, indagar tambien
+//Deserializacion, proceso contrario.
 passport.deserializeUser((id, done) => {
     usuario.findById(id, (err, usuario) => {
         done(err, usuario);
