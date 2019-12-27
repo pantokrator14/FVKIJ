@@ -7,7 +7,7 @@ const bcrypt = require('bcryptjs'); //Para el
 const adminSchema = new Schema({
     nombreCargo : {type : String, required: true}, //nombre del cargo
     contraseña : {type: String, required : true}, //Contraseña de acceso
-    //permisos : {type : String, required : true}, //Para definir las acciones de cada uno.
+    permisos : {type : String, required : true}, //Para definir las acciones de cada uno.
 });
 
 //Encriptacion
