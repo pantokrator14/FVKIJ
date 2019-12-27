@@ -3,7 +3,7 @@
 const router = require('express').Router(); //Enrutador
 const passport = require('passport'); //Para login y esas cosas.
 
-
+const Admin = require('../models/administrator'); //Modelo de datos
 
 const { isAuthenticated } = require('../helpers/auth'); //Para asegurarnos de que se está identificado.
 
