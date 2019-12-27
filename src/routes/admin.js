@@ -15,16 +15,16 @@ router.get('/AdminRegister', (req, res) => {
 router.post('/Register', (req, res) => {
     const errors = []; //Que tomara una lista de errores los cuales se mostraran en el formulario
     //Solicitamos la informacion del formulario
-    const {cargo, contraseña, correo, permisos} = req.body;
+    const {cargo, password, correo, permisos} = req.body;
     
     //Empezamos a definir los errores
     if(!cargo){ //Si no se escribio el cargo
         errors.push({text : 'Ingrese un cargo.'}); //Mandar este mensaje
     }
-    if(!contraseña){ //Si no se ingreso contraseña
+    if(!password){ //Si no se ingreso contraseña
         errors.push({text : 'Escriba una contraseña.'});
     }
-    if(contraseña.length < 4 || contraseña.length > 12){ //Si la longitud de la contraseña es menor a 4 digitos o mayor a 12
+    if(password.length < 4 || contraseña.length > 12){ //Si la longitud de la contraseña es menor a 4 digitos o mayor a 12
         errors.push({text : 'La contraseña debe ser mayor a 4 digitos y menor que 12.'});
     }
     if(!correo){ //Si no se escribio el correo
