@@ -17,7 +17,8 @@ const userSchema = new Schema({
     peso : {type : Number, required : true},
     direccion : {type : String, required : true},
     dojoID : {type : String, required : true},
-    creacion : {type : Date, default : Date.now}
+    creacion : {type : Date, default : Date.now},
+    permisos : {type : String, default : 'usuario'}, //Para identificar sus funciones, complemento a la autenticacion especificamente para los usuarios
 });
 
 //Encriptacion
