@@ -70,12 +70,12 @@ passport.deserializeUser((id, done) => {
 //Para los Admin.
 passport.use(new EstrategiaLocal({ 
     usernameField : 'correo'
-}, async(email, dojoPassword, done) => { 
+}, async(correo, password, done) => { 
     const admin = await Admin.findOne({correo : correo}); 
     if (!admin){ 
         return done(null, false, {message : 'Perfil de administrador no existe'}); 
     } else { 
-        const compara = await Admin.matchPassword(adpass); 
+        const compara = await Admin.matchPassword(password); 
         if(compara){ 
             return done(null, Admin); 
         } else { 
