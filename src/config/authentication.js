@@ -4,6 +4,7 @@ const EstrategiaLocal = require('passport-local').Strategy; //Y de ella sacamos 
 const mongoose = require('mongoose'); //Mongoose para usar los comandos de la base de datos.
 const Usuario = require('../models/usuarios'); //Requerimos el modelo de usuario
 const Dojo = require('../models/dojos'); //Y de los dojos
+const Admin = require('../models/administrator'); //Y de los admin
 
 //Para los usuarios
 passport.use(new EstrategiaLocal({ //Definimos una nueva estrategia de validacion
@@ -62,5 +63,35 @@ passport.serializeUser((dojo, done) => {
 passport.deserializeUser((id, done) => {
     usuario.findById(id, (err, dojo) => {
         done(err, dojo);
+    });
+});
+
+//----------------------------------------------------------------------------------------------------
+//Para los Admin.
+passport.use(new EstrategiaLocal({ 
+    usernameField : 'correo'
+}, async(email, dojoPassword, done) => { 
+    const admin = await Admin.findOne({correo : correo}); 
+    if (!admin){ 
+        return done(null, false, {message : 'Perfil de administrador no existe'}); 
+    } else { 
+        const compara = await Admin.matchPassword(adpass); 
+        if(compara){ 
+            return done(null, Admin); 
+        } else { 
+            return done(null, false, {message : 'Contraseña incorrecta'}); 
+        }
+    }
+}));
+
+//Serializacion de admin
+passport.serializeUser((Admin, done) => {
+    done(null, Admin.id); 
+});
+
+//Deserializacion
+passport.deserializeUser((id, done) => {
+    usuario.findById(id, (err, Admin) => {
+        done(err, Admin);
     });
 });
