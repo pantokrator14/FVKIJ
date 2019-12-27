@@ -23,4 +23,4 @@ adminSchema.methods.matchPassword = async (contraseña) => {
 };
 
 //Exportamos el modelo
-module.exports = mongoose.model('Asignacion', asignacionSchema);
+module.exports = mongoose.model('Admin', adminSchema);
