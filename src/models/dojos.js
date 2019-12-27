@@ -18,7 +18,8 @@ const dojoSchema = new Schema({
     FounderID : Number,
     FounderEmail : String,
     grados : String,
-    ingresoAlSistema : {type : Date, default : Date.now}
+    ingresoAlSistema : {type : Date, default : Date.now},
+    permisos : {type : String, default : 'dojo'}, //Para identificar sus funciones, complemento a la autenticacion especificamente para los dojos
 });
 
 //Pasamos a encriptar la contraseña usando procesos asincronos que tomaran la contraseña y haran el hash
