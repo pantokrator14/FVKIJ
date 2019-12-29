@@ -2,7 +2,7 @@
 const helpers = {}; //Creamos una variable llamada helpers
 
 helpers.isAuthenticated = (req, res, next) => { //A la cual creamos un metodo
-  if (req.isAuthenticated()) { //Si el usuario está autenticado
+  if (req.isAuthenticated()) { //Si el usuario está autenticado (funcion de passport)
     return next(); //Pasa
   }
   req.flash('error_msg', 'No esta autenticado.'); //Sino, error.
