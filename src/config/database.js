@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 
 mongoose.set('useFindAndModify', false); //Por averiguar...
-mongoose.connect('mongodb+srv://admin:admin@fvk-h6afq.mongodb.net/test?retryWrites=true&w=majority', {
+mongoose.connect(process.env.DATABASE_URL || 'mongodb+srv://admin:admin@fvk-h6afq.mongodb.net/test?retryWrites=true&w=majority', {
     useCreateIndex: true, //Averiguar esto también...
     useNewUrlParser: true
 }) //Conectamos, el newparser es para que no de error al conectar

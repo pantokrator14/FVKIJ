@@ -29,7 +29,7 @@ app.use(express.urlencoded({extended: false})); //Con esto permitiremos al servi
 app.use(method('_method')); //Lo usaremos para los metodos put y delete en formularios de edicion.
 //Configuramos las sesiones
 app.use(session({
-    secret: 'endogeno', //Palabra secreta
+    secret: process.env.SECRET || 'endogeno', //Palabra secreta
     resave: true, //Configuraciones básicas, indagar.
     saveUninitialized: true
 }));
