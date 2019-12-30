@@ -55,7 +55,7 @@ router.post('/dsignup', async (req, res) => { //Declaramos un proceso asincrono
     //Ahora, si hay errores en la lista
     if(errors.length > 0){
         //Entonces nos redigirimos al formulario de registro mostrando los errores
-        res.render('dsignup', {errors, DojoName, DojoEmail, DojoRIF, DojoPassword, PasswordConfirmation, DojoFoundation, DojoAddress, FounderName, FounderEmail, FounderID, artes, grados});
+        res.render('dojos/dsignup', {errors, DojoName, DojoEmail, DojoRIF, DojoPassword, PasswordConfirmation, DojoFoundation, DojoAddress, FounderName, FounderEmail, FounderID, artes, grados});
     } else { //Sino, revisamos si no existe un email ya registrado 
         const emailDojo = await dojo.findOne({email : DojoEmail});
         //Si existe
@@ -82,7 +82,7 @@ router.post('/dsignup', async (req, res) => { //Declaramos un proceso asincrono
 
 
 //Página de inicio
-router.get('/dojos/init', (req, res) => {
+router.get('/dojos/init', isAuthenticated, (req, res) => {
     res.render('dojos/dojo-init');
 });
 
@@ -164,7 +164,7 @@ router.delete('dojo/delete/:id', isAuthenticated, async (req, res) => {
 //-------------------------------------------------------------------------
 
 //Para ingresar al sistema
-router.post('/dinit', isAuthenticated, passport.authenticate('local', {
+router.post('/dinit', passport.authenticate('dojolocal', {
     successRedirect: '/dojos/init', //Si hay exito, redirecciona al panel del dojo
     failureRedirect: '/', //Sino reaparece en la misma página
     failureFlash: true //Investigar
