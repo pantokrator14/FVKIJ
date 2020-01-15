@@ -11,7 +11,7 @@ const {isAuthenticated} = require('../helpers/auth'); //Usamos esto para asegura
 router.post('/dojos/members/ingreso', isAuthenticated, async (req, res) => { //Declaramos un proceso asincrono
     const errors = []; //Que tomara una lista de errores los cuales se mostraran en el formulario
     //Solicitamos la informacion del formulario
-    const {nombre, cedula, email, fechaNacimiento, contraseña, confirmacion, genero, grado, direccion, peso, tamaño} = req.body;
+    const {nombre, cedula, email, fechaNacimiento, password, confirmacion, genero, grado, direccion, peso, altura} = req.body;
     
     //Empezamos a definir los errores
     if(!nombre){ //Si no se escribio el nombre
@@ -20,13 +20,13 @@ router.post('/dojos/members/ingreso', isAuthenticated, async (req, res) => { //D
     if(!cedula){ //Si no se la cedula
         errors.push({text : 'Ingrese la cedula de identidad.'});
     }
-    if(!contraseña){ //Si no se ingreso contraseña
+    if(!password){ //Si no se ingreso contraseña
         errors.push({text : 'Escriba una contraseña.'});
     }
-    if(contraseña.length < 4 || contraseña.length > 12){ //Si la longitud de la contraseña es menor a 4 digitos o mayor a 12
+    if(password.length < 4 || password.length > 12){ //Si la longitud de la contraseña es menor a 4 digitos o mayor a 12
         errors.push({text : 'La contraseña debe ser mayor a 4 digitos y menor que 12.'});
     }
-    if(contraseña != confirmacion){ //Si las contraseñas no son iguales
+    if(password != confirmacion){ //Si las contraseñas no son iguales
         errors.push({text : 'Las contraseñas no coinciden.'});
     }
     if(!email){ //Si no se escribio el correo
@@ -47,7 +47,7 @@ router.post('/dojos/members/ingreso', isAuthenticated, async (req, res) => { //D
     if(!direccion){
         errors.push({text : 'Ingrese una direccion.'});
     }
-    if(!tamaño){
+    if(!altura){
         errors.push({text : 'Ingrese la altura del kenshi.'});
     }
     if(!peso){
@@ -56,26 +56,26 @@ router.post('/dojos/members/ingreso', isAuthenticated, async (req, res) => { //D
     //Ahora, si hay errores en la lista
     if(errors.length > 0){
         //Entonces nos redigirimos al formulario de registro mostrando los errores
-        res.render('dojos/dojo-members', {errors, nombre, email, cedula, contraseña, confirmacion, fechaNacimiento, peso, tamaño, grado, genero, direccion});
+        res.render('dojos/dojo-members', {errors, nombre, email, cedula, password, confirmacion, fechaNacimiento, peso, altura, grado, genero, direccion});
     } else { //Sino, revisamos si no existe un email ya registrado 
         const emailUsuario = await usuario.findOne({email : email});
         //Si existe
         if(emailUsuario){
             req.flash('error_msg', 'Ya existe un dojo registrado con ese correo electronico.'); //Enviamos este mensaje
-            res.redirect('dojos/dojo-members'); //Y redireccionamos
+            res.redirect('/dojos/members'); //Y redireccionamos
         } else { //Finalmente, si no ha ocurrido nada de eso, registramos
             //Guardamos todo en un nuevo objeto
-            const newUser = new usuario({nombre, email, cedula, contraseña, fechaNacimiento, grado, genero, direccion, peso, tamaño});
-            newUser.dojoID = req.dojo.id; //Ingresamos de forma automatica el id del dojo al que pertenece
+            const newUser = new usuario({nombre, email, cedula, password, fechaNacimiento, grado, genero, direccion, peso, altura});
+            newUser.dojoID = req.user._id; //Ingresamos de forma automatica el id del dojo al que pertenece
             //Encriptamos la contraseña
-            newUser.contraseña = await newUser.encryptPassword(contraseña);
+            newUser.password = await newUser.encryptPassword(password);
             //Guardamos
             await newUser.save();
             console.log(newUser); //Mostramos por consola los datos para verificar
             //enviar mensaje
             req.flash('success_msg', 'El kenshin ha sido registrado con exito. Puede ingresar.');
             //Redireccionamos a la pagina de inicio
-            res.redirect('dojos/dojo-members');
+            res.redirect('/dojos/members');
         }
     }
 });
@@ -98,9 +98,9 @@ router.get('/config/:id', isAuthenticated, async (req, res) => {
 //Esto es para actualizar
 router.put('/config/edit/:id', isAuthenticated, async (req, res) => {
     //Solicitamos la informacion del formulario
-    const {nombre, cedula, email, fechaNacimiento, genero, grado, direccion, peso, tamaño} = req.body;
+    const {nombre, cedula, email, fechaNacimiento, genero, grado, direccion, peso, altura} = req.body;
     //Buscamos y modificamos.
-    await usuario.findByIdAndUpdate(req.params.id, {nombre, cedula, email, fechaNacimiento, genero, grado, direccion, peso, tamaño});
+    await usuario.findByIdAndUpdate(req.params.id, {nombre, cedula, email, fechaNacimiento, genero, grado, direccion, peso, altura});
     req.flash('success_msg', 'Informacion modificada'); //Enviamos mensaje
     res.redirect('/kenshi/init'); //Redireccionamos al inicio.
 });
@@ -135,7 +135,11 @@ router.delete('miembro/delete/:id', isAuthenticated, async (req, res) => {
 
 
 //Para el login de usuario
-router.post('/kinit', passport.authenticate('local', {
+router.post('/kinit', (req, res, next) => {
+    console.log(req.body)
+    next()
+},
+passport.authenticate('local', {
         successRedirect: '/kenshi/init', //Si hay exito, redirecciona al panel del usuario
         failureRedirect: '/', //Sino reaparece en la misma página
         failureFlash: true //Investigar

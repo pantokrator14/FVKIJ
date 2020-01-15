@@ -34,14 +34,14 @@
                     
                     <div class="container reverse carousel-item card-body">
                         <h2>剣士 - KENSHIS</h2>
-                        <form action="/kinit" action="post">
+                        <form action="/kinit" method="post">
                             <div class="form-group">
                                 <label for="">Correo electrónico</label>
-                                <input type="email" class="form-control" placeholder="Enter e-Mail">
+                                <input type="email" name="email" class="form-control" placeholder="Enter e-Mail">
                             </div>
                             <div class="form-group">
                                 <label for="">Contraseña</label>
-                                <input type="password" class="form-control" placeholder="Enter Password">
+                                <input type="password" name="password" class="form-control" placeholder="Enter Password">
                             </div>
                             <br>
                             <button type="submit" class="btn btn-danger">Ingresar</button>
@@ -52,14 +52,14 @@
 
                     <div class="container reverse carousel-item card-body">
                         <h2>AUTORIDADES</h2>
-                        <form action="/ainit" action="post">
+                        <form action="/ainit" method="post">
                             <div class="form-group">
                                 <label for="">Correo administrativo</label>
-                                <input type="email" class="form-control" placeholder="Enter e-Mail">
+                                <input type="email" class="form-control" name="email" placeholder="Enter e-Mail">
                             </div>
                             <div class="form-group">
                                 <label for="">Contraseña</label>
-                                <input type="password" class="form-control" placeholder="Enter Password">
+                                <input type="password" class="form-control" name="password" placeholder="Enter Password">
                             </div>
                             <br>
                             <button type="submit" class="btn btn-danger">Ingresar</button>

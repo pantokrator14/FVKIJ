@@ -56,24 +56,28 @@ router.post('/dsignup', async (req, res) => { //Declaramos un proceso asincrono
     if(errors.length > 0){
         //Entonces nos redigirimos al formulario de registro mostrando los errores
         res.render('dojos/dsignup', {errors, DojoName, DojoEmail, DojoRIF, DojoPassword, PasswordConfirmation, DojoFoundation, DojoAddress, FounderName, FounderEmail, FounderID, artes, grados});
-    } else { //Sino, revisamos si no existe un email ya registrado 
-        const emailDojo = await dojo.findOne({email : DojoEmail});
-        //Si existe
-        if(emailDojo){
-            req.flash('error_msg', 'Ya existe un dojo registrado con ese correo electronico.'); //Enviamos este mensaje
-            res.redirect('/users/signup'); //Y redireccionamos
-        } else { //Finalmente, si no ha ocurrido nada de eso, registramos
-            //Guardamos todo en un nuevo objeto
-            const newDojo = new dojo({DojoName, DojoEmail, DojoRIF, DojoPassword, DojoFoundation, DojoAddress, FounderName, FounderEmail, FounderID, artes, grados});
-            //Encriptamos la contraseña
-            newDojo.DojoPassword = await newDojo.encryptPassword(DojoPassword);
-            //Guardamos
-            await newDojo.save();
-            console.log(newDojo); //Mostramos por consola el modelo guardado
-            //enviar mensaje
-            req.flash('success_msg', 'Su dojo ha sido registrado satisfactoriamente. Nuestros administradores le enviaran un correo confirmando su validacion.');
-            //Redireccionamos a la pagina de inicio
-            res.redirect('/');
+    } else { //Sino, revisamos si no existe un email ya registrado
+        try { 
+            const emailDojo = await dojo.findOne({email : DojoEmail});
+            //Si existe
+            if(emailDojo){
+                req.flash('error_msg', 'Ya existe un dojo registrado con ese correo electronico.'); //Enviamos este mensaje
+                res.redirect('/users/signup'); //Y redireccionamos
+            } else { //Finalmente, si no ha ocurrido nada de eso, registramos
+                //Guardamos todo en un nuevo objeto
+                const newDojo = new dojo({DojoName, DojoEmail, DojoRIF, DojoPassword, DojoFoundation, DojoAddress, FounderName, FounderEmail, FounderID, artes, grados});
+                //Encriptamos la contraseña
+                newDojo.DojoPassword = await newDojo.encryptPassword(DojoPassword);
+                //Guardamos
+                await newDojo.save();
+                console.log(newDojo); //Mostramos por consola el modelo guardado
+                //enviar mensaje
+                req.flash('success_msg', 'Su dojo ha sido registrado satisfactoriamente. Nuestros administradores le enviaran un correo confirmando su validacion.');
+                //Redireccionamos a la pagina de inicio
+                res.redirect('/');
+            }
+        } catch (e) {
+            res.end(e)
         }
     }
 });
@@ -92,7 +96,7 @@ router.get('/dojos/init', isAuthenticated, (req, res) => {
 router.get('/FVK/list', isAuthenticated , async (req, res) => {
     const activeDojos = await dojo.find({solvente : true}).sort({ingresoAlSistema : 'desc'}); //Buscamos los dojos solventes
     const inactiveDojos = await dojo.find({solvente : false}).sort({ingresoAlSistema : 'desc'}); //Buscamos los dojos insolventes
-    res.render('admin/dojo-list', {activeDojos}, {inactiveDojos}); //Redireccionamos a la página respectiva donde se mostraran. 
+    res.render('admin/dojolist', {activeDojos, inactiveDojos}); //Redireccionamos a la página respectiva donde se mostraran. 
     //Sólo se mostraran las listas de dojos en la página de los administradores.
 });
 
@@ -100,20 +104,25 @@ router.get('/FVK/list', isAuthenticated , async (req, res) => {
 
 //Mostrar usuarios en la pagina del dojo
 router.get('/dojos/members', isAuthenticated, async (req, res) => {
-    const activeDojos = await usuario.findById({$and : [{dojoID : req.dojo.id}, {solvente : true}]}).sort({creacion : 'desc'}); //Buscamos aquellos que pertenezcan al dojo y  esten solventes, de forma descendente de acuerdo a su ingreso al sistema
-    const insolventes = await usuario.findById({$and : [{dojoID : req.dojo.id}, {solvente : false}]}).sort({creacion : 'desc'}); //Y aquellos que pertenecen pero no estan solventes, de forma descendente de acuerdo a su ingreso al sistema
-    res.render('dojos/dojo-members', { activeDojos }, {insolventes}); //Y los mostramos en la vista.
+    const dojoId = req.user._id
+    const activeUsers = await usuario.find({dojoID : dojoId, solvente : true}).sort({creacion : 'desc'}); //Buscamos aquellos que pertenezcan al dojo y  esten solventes, de forma descendente de acuerdo a su ingreso al sistema
+    const insolventes = await usuario.find({dojoID : dojoId, solvente : false}).sort({creacion : 'desc'}); //Y aquellos que pertenecen pero no estan solventes, de forma descendente de acuerdo a su ingreso al sistema
+    res.render('dojos/dojo-members', {activeUsers, insolventes}); //Y los mostramos en la vista.
 });
 
 //Mostrar solicitudes de nuevos dojos
 router.get('/FVK/solicitudes',isAuthenticated, async (req, res) => {
     const newDojo = await dojo.find({activo : false}).sort({creacion : 'desc'}); //Buscamos dojos que no han sido activados aun
-    res.render('admin/asignaciones', {newDojo}); //Y lo mostramos en la pagina
+    res.render('admin/solicitudes', {newDojo}); //Y lo mostramos en la pagina
 });
 
 //-------------------------------------------------------------------------
 
 //Modificar informacion
+router.get('/dojo/config', isAuthenticated, async (req, res) => {
+    const data = req.user
+    res.render('dojos/config', {data})
+})
 
 // Para la página de configuracion del dojo especifico
 router.get('/dojo/config/:id', isAuthenticated, async (req, res) => {

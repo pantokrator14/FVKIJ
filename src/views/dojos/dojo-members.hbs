@@ -101,7 +101,7 @@
                                         <div class="row">
                                             <div class="form-group col-sm-12 col-md-6">
                                                 <label for="">Contraseña</label>
-                                                <input type="password" name="contraseña" class="form-control">
+                                                <input type="password" name="password" class="form-control">
                                             </div>
                                             <div class="form-group col-sm-12 col-md-6">
                                                 <label for="">Confirmar contraseña</label>
@@ -198,12 +198,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{#each activeUser}}
+                        {{#each activeUsers}}
                             <tr>
                                 <th scope="row"> {{nombre}} </th>
                                 <td> {{cedula}} </td>
                                 <td> {{genero}} </td>
-                                <td> {{tamaño}} </td>
+                                <td> {{altura}} </td>
                                 <td> {{peso}} </td>
                                 <td> {{fechaNacimiento}} </td>
                                 <td> {{email}} </td>
@@ -251,12 +251,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{#each insolvente}}
+                        {{#each insolventes}}
                             <tr>
                                 <th scope="row"> {{nombre}} </th>
                                 <td> {{cedula}} </td>
                                 <td> {{genero}} </td>
-                                <td> {{tamaño}} </td>
+                                <td> {{altura}} </td>
                                 <td> {{peso}} </td>
                                 <td> {{fechaNacimiento}} </td>
                                 <td> {{email}} </td>

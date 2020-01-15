@@ -5,9 +5,17 @@ const handlebars = require('express-handlebars'); //Este será el motor de plant
 const method = require('method-override'); //Permite el uso de otros métodos diferentes al post y get para formularios
 const session = require('express-session'); //Para guardar temporalmente las acciones de los usuarios en forma de sesiones.
 const flash = require('connect-flash'); //Esto es para mostrar mensajes
-
+const passport = require('passport');
 //Inicializamos el servidor y anexamos las configuraciones de la base de datos y passport
 const app = express(); //Usamos express
+//Configuramos las sesiones
+app.use(session({
+    secret: process.env.SECRET || 'endogeno', //Palabra secreta
+    resave: true, //Configuraciones básicas, indagar.
+    saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 require('./config/database'); //Solicitamos la base de datos
 require('./config/authentication'); //Solicitamos la configuración de passport para las autenticaciones de usuario
 
@@ -27,12 +35,7 @@ app.set('view engine', '.hbs'); //terminamos por declarar al handlebars como mot
 //Aquí se declararan funciones que se realizaran antes de enviar a las rutas. Son como avisos o mensajes.
 app.use(express.urlencoded({extended: false})); //Con esto permitiremos al servidor recibir y leer los datos de los formularios, los cuales no van a contener imagenes
 app.use(method('_method')); //Lo usaremos para los metodos put y delete en formularios de edicion.
-//Configuramos las sesiones
-app.use(session({
-    secret: process.env.SECRET || 'endogeno', //Palabra secreta
-    resave: true, //Configuraciones básicas, indagar.
-    saveUninitialized: true
-}));
+
 app.use(flash()); //El servidor usara flash para mensajes.
 
 

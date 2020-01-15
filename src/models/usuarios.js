@@ -10,10 +10,10 @@ const userSchema = new Schema({
     fechaNacimiento : { type : Date, required : true},
     solvente : { type : Boolean, default : true},  //Solvencia con la federación o con el dojo, por definir
     email : {type : String, required : false},
-    contraseña : { type : String, required : true},
+    password : { type : String, required : true},
     grado : {type : String, required : true},   //1er Dan, 5to Kyu, etc.
     genero : {type : String, required : true},
-    tamaño : {type : Number, required : true},
+    altura : {type : Number, required : true},
     peso : {type : Number, required : true},
     direccion : {type : String, required : true},
     dojoID : {type : String, required : true},
@@ -22,15 +22,15 @@ const userSchema = new Schema({
 });
 
 //Encriptacion
-userSchema.methods.encryptPassword = async (contraseña) => {
+userSchema.methods.encryptPassword = async (contrasena) => {
     const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(contraseña, salt);
+    const hash = await bcrypt.hash(contrasena, salt);
     return hash;
 };
 
 //Comparacion de contraseñas
-userSchema.methods.matchPassword = async (contraseña) => {
-    return await bcrypt.compare(contraseña, this.contraseña);
+userSchema.methods.matchPassword = async function (password) {
+    return await bcrypt.compare(password, this.password);
 };
 
 module.exports = mongoose.model('usuario', userSchema);

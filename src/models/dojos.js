@@ -23,15 +23,15 @@ const dojoSchema = new Schema({
 });
 
 //Pasamos a encriptar la contraseña usando procesos asincronos que tomaran la contraseña y haran el hash
-dojoSchema.methods.encryptPassword = async (contraseña) => {
+dojoSchema.methods.encryptPassword = async (contrasena) => {
     const salt = await bcrypt.genSalt(10); //Generador para el hash
-    const hash = await bcrypt.hash(contraseña, salt); //Se realiza un hash donde se usaran la contraseña y el generador 
+    const hash = await bcrypt.hash(contrasena, salt); //Se realiza un hash donde se usaran la contraseña y el generador 
     return hash; //Retorna la clave ya encriptada
 };
 
 //Comparacion de contraseñas, usamos igual una funcion asincrona que toma la contraseña como parametro
-dojoSchema.methods.matchPassword = async (contraseña) => {
-    return await bcrypt.compare(contraseña, this.contraseña); //Compara la contraseña con la guardada en base de datos
+dojoSchema.methods.matchPassword = async function (password) {
+    return await bcrypt.compare(password, this.DojoPassword); //Compara la contraseña con la guardada en base de datos
 };
 
 //Finalmente exportamos este modelo
