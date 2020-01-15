@@ -12,7 +12,7 @@ const { isAuthenticated } = require('../helpers/auth'); //Para asegurarnos de qu
 router.get('/AdminRegister', (req, res) => {
     res.render('admin/register');
 });
-router.post('/Register', (req, res) => {
+router.post('/Register', async (req, res) => {
     const errors = []; //Que tomara una lista de errores los cuales se mostraran en el formulario
     //Solicitamos la informacion del formulario
     const {cargo, password, correo, permisos} = req.body;
@@ -24,7 +24,7 @@ router.post('/Register', (req, res) => {
     if(!password){ //Si no se ingreso contraseña
         errors.push({text : 'Escriba una contraseña.'});
     }
-    if(password.length < 4 || contraseña.length > 12){ //Si la longitud de la contraseña es menor a 4 digitos o mayor a 12
+    if(password.length < 4 || password.length > 12){ //Si la longitud de la contraseña es menor a 4 digitos o mayor a 12
         errors.push({text : 'La contraseña debe ser mayor a 4 digitos y menor que 12.'});
     }
     if(!correo){ //Si no se escribio el correo
@@ -37,7 +37,7 @@ router.post('/Register', (req, res) => {
     //Ahora, si hay errores en la lista
     if(errors.length > 0){
         //Entonces nos redigirimos al formulario de registro mostrando los errores
-        res.render('admin/register', {errors, cargo, contraseña, permisos});
+        res.render('admin/register', {errors, cargo, contrasena, permisos});
     } else { //Sino, revisamos si no existe un cargo ya registrado 
         const cargoAdmin = await Admin.findOne({cargo : cargo});
         //Si existe
@@ -46,9 +46,9 @@ router.post('/Register', (req, res) => {
             res.redirect('admin/register'); //Y redireccionamos
         } else { //Finalmente, si no ha ocurrido nada de eso, registramos
             //Guardamos todo en un nuevo objeto
-            const newAdmin = new admin({cargo, contraseña, permisos});
+            const newAdmin = new admin({cargo, correo, password, permisos});
             //Encriptamos la contraseña
-            newAdmin.contraseña = await newAdmin.encryptPassword(contraseña);
+            newAdmin.password = await newAdmin.encryptPassword(password);
             //Guardamos
             await newAdmin.save();
             console.log(newAdmin); //Mostramos por consola los datos para verificar
@@ -61,6 +61,7 @@ router.post('/Register', (req, res) => {
 });
 //-----------------------------------------------------------------------------------------------
 
+
 //Mostramos la pagina de inicio.
 router.get('/FVK/init', isAuthenticated, (req, res) => {
     res.render('admin/admin-init');
@@ -69,7 +70,10 @@ router.get('/FVK/init', isAuthenticated, (req, res) => {
 //-------------------------------------------------------------------------------
 
 //Login
-router.post('/ainit', passport.authenticate('local', {
+router.post('/ainit', (req, res, next) => {
+    next();
+},
+passport.authenticate('adminlocal', {
     successRedirect: '/FVK/init',
     failureRedirect: '/',
     failureFlash: true

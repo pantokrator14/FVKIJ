@@ -12,15 +12,15 @@ const adminSchema = new Schema({
 });
 
 //Encriptacion
-adminSchema.methods.encryptPassword = async (contraseña) => {
+adminSchema.methods.encryptPassword = async (contrasena) => {
     const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(contraseña, salt);
+    const hash = await bcrypt.hash(contrasena, salt);
     return hash;
 };
 
 //Comparacion de contraseñas
-adminSchema.methods.matchPassword = async (contraseña) => {
-    return await bcrypt.compare(contraseña, this.contraseña);
+adminSchema.methods.matchPassword = async function (contrasena) {
+    return await bcrypt.compare(contrasena, this.password);
 };
 
 //Exportamos el modelo
