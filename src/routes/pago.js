@@ -46,7 +46,7 @@ router.post('/dojos/ingresos', isAuthenticated, async (req, res) => { //Proceso 
             cantidad, 
             descripcion
         });
-        newPago.destinatario = req.dojo.id; //El destinatario sera el usuario
+        newPago.destinatario = req.user.id; //El destinatario sera el usuario
         await newPago.save(); //Guardamos
         req.flash('success_msg', 'Ingreso registrado correctamente.') //Mostramos el mensaje
         res.redirect('/dojos/ingresos'); //Y redireccionamos a la pagina
@@ -86,7 +86,7 @@ router.post('/dojos/egresos', isAuthenticated, async (req, res) => { //Proceso a
             cantidad, 
             descripcion
         });
-        newPago.emisor = req.dojo.id; //El destinatario sera el usuario
+        newPago.emisor = req.user.id; //El destinatario sera el usuario
         await newPago.save(); //Guardamos
         req.flash('success_msg', 'Ingreso registrado correctamente.') //Mostramos el mensaje
         res.redirect('dojos/egresos'); //Y redireccionamos a la pagina
@@ -130,7 +130,7 @@ router.post('/FVK/ingresos', isAuthenticated, async (req, res) => { //Proceso as
             cantidad, 
             descripcion
         });
-        newPago.destinatario = req.dojo.id; //El destinatario sera el usuario
+        newPago.destinatario = req.user.id; //El destinatario sera el usuario
         await newPago.save(); //Guardamos
         req.flash('success_msg', 'Ingreso registrado correctamente.') //Mostramos el mensaje
         res.redirect('admin/ingresos'); //Y redireccionamos a la pagina
@@ -171,7 +171,7 @@ router.post('/FVK/egresos', isAuthenticated, async (req, res) => { //Proceso asi
             cantidad, 
             descripcion
         });
-        newPago.emisor = req.dojo.id; //El destinatario sera el usuario
+        newPago.emisor = req.user.id; //El destinatario sera el usuario
         await newPago.save(); //Guardamos
         req.flash('success_msg', 'Ingreso registrado correctamente.') //Mostramos el mensaje
         res.redirect('admin/egresos'); //Y redireccionamos a la pagina
