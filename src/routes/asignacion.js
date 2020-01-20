@@ -11,7 +11,7 @@ const { isAuthenticated } = require('../helpers/auth');
 //Página para mostrar las asignaciones (pagina del admin)
 router.get('/FVK/asignaciones', isAuthenticated, async (req, res) => {
     const asignaciones = await asignacion.find().sort({tipo : 'desc'}); //buscamos las asignaciones que existen, con y sin responsable
-    res.render('/admin/asignaciones', { asignaciones }); //Mostramos la vista con las asignaciones
+    res.render('admin/asignaciones', { asignaciones }); //Mostramos la vista con las asignaciones
 })
 
 //------------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ router.post('/asignaciones/nuevoequipo', isAuthenticated, async (req, res) => {
         errors.push({text : 'Ingrese la descripcion del equipo.'}); //Lo mismo
     }
     if(errors.length > 0){ //Si hay errores
-        res.render('admin/asignaciones', {errors, tipo, descripcion}); //Mostrar los errores en la pagina.
+        res.render('/FVK/asignaciones', {errors, tipo, descripcion}); //Mostrar los errores en la pagina.
     } else { //Si no hay error
         const newAsignacion = new asignacion({tipo, descripcion, responsable}); //Creamos la nueva asignacion
         await newAsignacion.save(); //Guardamos
@@ -51,7 +51,7 @@ router.put('asignaciones/guardar/:id', isAuthenticated, async (req, res) => {
     const { tipo, descripcion, responsable } = req.body; //Los datos registrados en el formulario
     await asignacion.findByIdAndUpdate(req.params.id, { tipo, descripcion, responsable }); //Buscamos el equipo por su id y lo actualizamos
     req.flash('success_msg', 'Informacion del equipo editada con exito.'); //mostramos mensaje
-    res.redirect('FVK/asignaciones'); //Y redireccionamos a la pagina donde se muestran los equipos
+    res.redirect('/FVK/asignaciones'); //Y redireccionamos a la pagina donde se muestran los equipos
 });
 
 //-------------------------------------------------------------------------------------
