@@ -18,7 +18,7 @@ const { isAuthenticated } = require('../helpers/auth'); //Para asegurarse de que
 //Mostrar ingresos
 router.get('/dojos/ingresos', isAuthenticated, async (req, res) => {
     const ingresos = await pago.find({destinatario : req.params.id});
-    res.render('dojos/ingresos', {ingresos}); //Pagina para ingresos
+    res.render('/dojos/ingresos', {ingresos}); //Pagina para ingresos
 });
 
 //Crear ingreso
@@ -39,7 +39,7 @@ router.post('/dojos/ingresos', isAuthenticated, async (req, res) => { //Proceso 
     //Ahora si hay errores en la lista
     if(errors.length > 0){
         //Entonces nos redirigimos a la página de ingresos y se muestran los errores
-        res.render('dojos/ingresos', {errors, emisor, cantidad, descripcion});
+        res.render('/dojos/ingresos', {errors, emisor, cantidad, descripcion});
     } else { //Sino, creamos el registro
         const newPago = new pago({
             emisor, 
@@ -58,7 +58,7 @@ router.post('/dojos/ingresos', isAuthenticated, async (req, res) => { //Proceso 
 //Egresos
 router.get('/dojos/egresos', isAuthenticated, async (req, res) => {
     const egresos = await pago.find({emisor : req.params.id});
-    res.render('dojos/egresos', {egresos}); //Pagina para ingresos
+    res.render('/dojos/egresos', {egresos}); //Pagina para ingresos
 });
 
 //Crear Egreso
@@ -79,7 +79,7 @@ router.post('/dojos/egresos', isAuthenticated, async (req, res) => { //Proceso a
     //Ahora si hay errores en la lista
     if(errors.length > 0){
         //Entonces nos redirigimos a la página de ingresos y se muestran los errores
-        res.render('dojos/egresos', {errors, destinatario, cantidad, descripcion});
+        res.render('/dojos/egresos', {errors, destinatario, cantidad, descripcion});
     } else { //Sino, creamos el registro
         const newPago = new pago({
             destinatario, 
@@ -89,7 +89,7 @@ router.post('/dojos/egresos', isAuthenticated, async (req, res) => { //Proceso a
         newPago.emisor = req.user.id; //El destinatario sera el usuario
         await newPago.save(); //Guardamos
         req.flash('success_msg', 'Ingreso registrado correctamente.') //Mostramos el mensaje
-        res.redirect('dojos/egresos'); //Y redireccionamos a la pagina
+        res.redirect('/dojos/egresos'); //Y redireccionamos a la pagina
     }
 });
 
@@ -102,7 +102,7 @@ router.post('/dojos/egresos', isAuthenticated, async (req, res) => { //Proceso a
 //Mostrar ingresos
 router.get('/FVK/ingresos', isAuthenticated, async (req, res) => {
     const ingresos = await pago.find({destinatario : req.params.id});
-    res.render('admin/ingresos', {ingresos}); //Pagina para ingresos
+    res.render('/admin/ingresos', {ingresos}); //Pagina para ingresos
 });
 
 //Crear ingreso
@@ -123,7 +123,7 @@ router.post('/FVK/ingresos', isAuthenticated, async (req, res) => { //Proceso as
     //Ahora si hay errores en la lista
     if(errors.length > 0){
         //Entonces nos redirigimos a la página de ingresos y se muestran los errores
-        res.render('admin/ingresos', {errors, emisor, cantidad, descripcion});
+        res.render('/admin/ingresos', {errors, emisor, cantidad, descripcion});
     } else { //Sino, creamos el registro
         const newPago = new pago({
             emisor, 
@@ -133,7 +133,7 @@ router.post('/FVK/ingresos', isAuthenticated, async (req, res) => { //Proceso as
         newPago.destinatario = req.user.id; //El destinatario sera el usuario
         await newPago.save(); //Guardamos
         req.flash('success_msg', 'Ingreso registrado correctamente.') //Mostramos el mensaje
-        res.redirect('admin/ingresos'); //Y redireccionamos a la pagina
+        res.redirect('/admin/ingresos'); //Y redireccionamos a la pagina
     }
 });
 
@@ -143,7 +143,7 @@ router.post('/FVK/ingresos', isAuthenticated, async (req, res) => { //Proceso as
 //Mostrar egresos
 router.get('/FVK/egresos', isAuthenticated, async (req, res) => {
     const egresos = await pago.find({emisor : req.params.id});
-    res.render('admin/egresos', {egresos}); //Pagina para egresos
+    res.render('/admin/egresos', {egresos}); //Pagina para egresos
 });
 
 //Crear Egreso
@@ -174,7 +174,7 @@ router.post('/FVK/egresos', isAuthenticated, async (req, res) => { //Proceso asi
         newPago.emisor = req.user.id; //El destinatario sera el usuario
         await newPago.save(); //Guardamos
         req.flash('success_msg', 'Ingreso registrado correctamente.') //Mostramos el mensaje
-        res.redirect('admin/egresos'); //Y redireccionamos a la pagina
+        res.redirect('/admin/egresos'); //Y redireccionamos a la pagina
     }
 });
 

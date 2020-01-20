@@ -11,7 +11,7 @@ const { isAuthenticated } = require('../helpers/auth');
 //Página para mostrar las asignaciones (pagina del admin)
 router.get('/FVK/asignaciones', isAuthenticated, async (req, res) => {
     const asignaciones = await asignacion.find().sort({tipo : 'desc'}); //buscamos las asignaciones que existen, con y sin responsable
-    res.render('admin/asignaciones', { asignaciones }); //Mostramos la vista con las asignaciones
+    res.render('/admin/asignaciones', { asignaciones }); //Mostramos la vista con las asignaciones
 })
 
 //------------------------------------------------------------------------------------
