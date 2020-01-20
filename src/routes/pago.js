@@ -102,7 +102,7 @@ router.post('/dojos/egresos', isAuthenticated, async (req, res) => { //Proceso a
 //Mostrar ingresos
 router.get('/FVK/ingresos', isAuthenticated, async (req, res) => {
     const ingresos = await pago.find({destinatario : req.params.id});
-    res.render('/admin/ingresos', {ingresos}); //Pagina para ingresos
+    res.render('/admin/FVK-ingresos', {ingresos}); //Pagina para ingresos
 });
 
 //Crear ingreso
@@ -133,7 +133,7 @@ router.post('/FVK/ingresos', isAuthenticated, async (req, res) => { //Proceso as
         newPago.destinatario = req.user.id; //El destinatario sera el usuario
         await newPago.save(); //Guardamos
         req.flash('success_msg', 'Ingreso registrado correctamente.') //Mostramos el mensaje
-        res.redirect('/admin/ingresos'); //Y redireccionamos a la pagina
+        res.redirect('/FVK/ingresos'); //Y redireccionamos a la pagina
     }
 });
 
@@ -143,7 +143,7 @@ router.post('/FVK/ingresos', isAuthenticated, async (req, res) => { //Proceso as
 //Mostrar egresos
 router.get('/FVK/egresos', isAuthenticated, async (req, res) => {
     const egresos = await pago.find({emisor : req.params.id});
-    res.render('/admin/egresos', {egresos}); //Pagina para egresos
+    res.render('/admin/FVK-egresos', {egresos}); //Pagina para egresos
 });
 
 //Crear Egreso
