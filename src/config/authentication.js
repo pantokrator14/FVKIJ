@@ -68,7 +68,7 @@ passport.use('dojolocal', new EstrategiaLocal({
 //----------------------------------------------------------------------------------------------------
 //Para los Admin.
 passport.use('adminlocal', new EstrategiaLocal({ 
-    usernameField : 'email',
+    usernameField : 'correo',
     passwordField: 'password'
 }, async(correo, password, done) => { 
     try {
