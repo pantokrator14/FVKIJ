@@ -46,7 +46,7 @@ passport.deserializeUser((obj, done) => {
 //Para los dojos, más o menos lo mismo.
 passport.use('dojolocal', new EstrategiaLocal({ 
     usernameField : 'DojoEmail',
-    passwordField : 'DojoPass'
+    passwordField : 'DojoPassword'
 }, async(email, dojoPassword, done) => { 
     const dojo = await Dojo.findOne({DojoEmail : email});
     if (!dojo || dojo.solvente == false || dojo.activo == false){ //Aqui esta la principal diferencia, si 
