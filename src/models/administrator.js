@@ -8,7 +8,7 @@ const adminSchema = new Schema({
     cargo : {type : String, required: true}, //nombre del cargo
     password : {type: String, required : true}, //Contraseña de acceso
     correo : {type: String, required : true}, //correo del cargo
-    permisos : {type : String, required : true}, //Para definir las acciones de cada uno.
+    permisos : {type : String, required : true, default : 'presidente', enum : ['presidente', 'secretario', 'tesorero']}, //Para definir las acciones de cada uno.
 });
 
 //Encriptacion
