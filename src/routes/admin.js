@@ -46,7 +46,7 @@ router.post('/Register', async (req, res) => {
             res.redirect('admin/register'); //Y redireccionamos
         } else { //Finalmente, si no ha ocurrido nada de eso, registramos
             //Guardamos todo en un nuevo objeto
-            const newAdmin = new admin({cargo, correo, password, permisos});
+            const newAdmin = new Admin({cargo, correo, password, permisos});
             //Encriptamos la contraseña
             newAdmin.password = await newAdmin.encryptPassword(password);
             //Guardamos
