@@ -5,21 +5,23 @@ const handlebars = require('express-handlebars'); //Este será el motor de plant
 const method = require('method-override'); //Permite el uso de otros métodos diferentes al post y get para formularios
 const session = require('express-session'); //Para guardar temporalmente las acciones de los usuarios en forma de sesiones.
 const flash = require('connect-flash'); //Esto es para mostrar mensajes
+const initDB = require('./config/database'); //Solicitamos la base de datos
 const passport = require('passport');
 //Inicializamos el servidor y anexamos las configuraciones de la base de datos y passport
 const app = express(); //Usamos express
 //Configuramos las sesiones
-app.use(session({
+/*app.use(session({
     secret: process.env.SECRET || 'endogeno', //Palabra secreta
     resave: true, //Configuraciones básicas, indagar.
     saveUninitialized: true
-}));
-app.use(passport.initialize());
-app.use(passport.session());
-require('./config/database'); //Solicitamos la base de datos
-require('./config/authentication'); //Solicitamos la configuración de passport para las autenticaciones de usuario
+}));*/
+//app.use(passport.initialize());
+//app.use(passport.session());
+
+//require('./config/authentication'); //Solicitamos la configuración de passport para las autenticaciones de usuario
 
 //Configuraciones iniciales
+app.set('secret', process.env.SECRET || 'endogeno');
 app.set('port', process.env.PORT || 3000); //Solicitamos un puerto para funcionar. Si el SO no tiene uno, asignar el 3000.
 app.set('views', directorios.join(__dirname, 'views')); //Esto le dirá al servidor que las vistas (html) se encuentran en la carpeta views. El dirname buscará este mismo archivo y el views indica la siguiente carpeta a buscar. ambas se juntan con el join.
 
@@ -51,18 +53,27 @@ app.use((req, res, next) => {
 
 
 //Enviamos a la pagina de inicio una vez el servidor corra, requiriendo el archivo de rutas
-app.use(require('./routes/init')); //Rutas para logins y registros
-app.use(require('./routes/asignacion')); //Opciones y rutas de las asignaciones
-app.use(require('./routes/pago')); //Opciones y rutas para los pagos
-app.use(require('./routes/kenshin')); //Opciones y rutas de los kenshin
-app.use(require('./routes/dojo')); //Opciones y rutas de los dojos
-app.use(require('./routes/admin')); //Rutas para el admin
+app.use('/', require('./routes/init')); //Rutas para logins y registros
+app.use('/equipment', require('./routes/asignacion')); //Opciones y rutas de las asignaciones
+app.use('/payment', require('./routes/pago')); //Opciones y rutas para los pagos
+app.use('/kenshin', require('./routes/kenshin')); //Opciones y rutas de los kenshin
+app.use('/dojo', require('./routes/dojo')); //Opciones y rutas de los dojos
+app.use('/admin', require('./routes/admin')); //Rutas para el admin
 
 
 //Solciitamos la carpeta donde estan los archivos estaticos, que si imagenes y estilos
 app.use(express.static(directorios.join(__dirname, 'public'))); //Es igual que el de los views y eso.
  
 //Finalmente inicializamos el servidor
-app.listen(app.get('port'), () => {
-    console.log('Servidor conectado en el puerto:', app.get('port'));
-});
+initDB((err, db) => {
+    if(err) {
+        console.warn("There's an error!");
+        return process.exit(1);
+    }
+
+    app.set('db', db);
+
+    app.listen(app.get('port'), () => {
+        console.log('Servidor conectado en el puerto:', app.get('port'));
+    });
+})

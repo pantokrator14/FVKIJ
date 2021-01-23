@@ -2,7 +2,7 @@
 const router = require('express').Router(); //Enrutador
 
 //Modelo de datos
-const pago = require('../models/pagos');
+const pago = require('../models/payment');
 
 const { isAuthenticated } = require('../helpers/auth'); //Para asegurarse de que se esta autenticado para realizar las acciones.
 

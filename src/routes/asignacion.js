@@ -3,7 +3,7 @@
 const router = require('express').Router(); //Enrutador
 
 //Modelo de datos:
-const asignacion = require('../models/asignaciones');
+const asignacion = require('../models/equipment');
 
 //Para autenticar. Se coloca entre el url y la palabra async de cada metodo
 const { isAuthenticated } = require('../helpers/auth');
