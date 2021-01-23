@@ -3,7 +3,7 @@ const router = require('express').Router(); //Solicitamos el enrutador.
 const passport = require('passport'); // solicitamos el passport para hacer las validaciones.
 
 //Requerimos ahora el modelo que creamos para los usuarios
-const usuario = require('../models/usuarios');
+const usuario = require('../models/user');
 
 const {isAuthenticated} = require('../helpers/auth'); //Usamos esto para asegurarnos de que se está autenticado para realizar las acciones
 

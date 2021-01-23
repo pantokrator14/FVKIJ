@@ -1,16 +1,26 @@
+const { STATUS_CODES } = require('http');
 //Aqui se van a colocar las configuraciones apra inicio de sesion y registro de dojos, asi como su modificación y eliminación.
 const router = require('express').Router(); //Solicitamos el enrutador.
 const passport = require('passport'); // solicitamos el passport para hacer las validaciones.
 
 //Requerimos ahora el modelo que creamos para los dojos
-const dojo = require('../models/dojos');
-const usuario = require('../models/usuarios'); //Modelo de usuario
+const Dojo = require('../models/dojo');
+const usuario = require('../models/user'); //Modelo de usuario
 
 const { isAuthenticated } = require('../helpers/auth'); //Para asegurarnos de que se esta autenticado para realizar las acciones
 
+// get all dojos
+router.get('/', async (req, res) => {
+    try {
+        const dojos = await Dojo.find({ active: true });
+        return res.status(200).json(dojos);
+    } catch(err) {
+        return res.status(400).end(STATUS_CODES[400]);
+    }
+});
 
 //Para el registro del dojo
-router.post('/dsignup', async (req, res) => { //Declaramos un proceso asincrono
+router.post('/', async (req, res) => { //Declaramos un proceso asincrono
     const errors = []; //Que tomara una lista de errores los cuales se mostraran en el formulario
     //Solicitamos la informacion del formulario
     const {DojoName, DojoEmail, DojoRIF, DojoPassword, PasswordConfirmation, DojoFoundation, DojoAddress, FounderName, FounderEmail, FounderID, artes, grados} = req.body;
@@ -119,7 +129,7 @@ router.get('/FVK/solicitudes',isAuthenticated, async (req, res) => {
 //-------------------------------------------------------------------------
 
 //Modificar informacion
-router.get('/dojo/config', isAuthenticated, async (req, res) => {
+router.get('/config', isAuthenticated, async (req, res) => {
     const data = req.user
     res.render('dojos/config', {data})
 })
@@ -148,7 +158,7 @@ router.put('/dojo/insolvencia/:id', isAuthenticated, async (req, res) => {
 });
 
 //Declarar solvencia (ADMIN, lo mismo que arriba)
-router.put('/dojo/solvencia/:id', isAuthenticated, async (req, res) => {
+router.put('/solvencia/:id', isAuthenticated, async (req, res) => {
     await dojo.findByIdAndUpdate(req.params.id, { solvente : true }); //buscamos y actualizamos
     req.flash('success_msg', 'Dojo solvente.'); //Mostramos mensaje
     res.redirect('/FVK/list'); //Redireccionamos
