@@ -2,21 +2,18 @@
 //Primero importamos la dependencia mongoose
 const mongoose = require('mongoose');
 
-mongoose.set('useFindAndModify', false); //Por averiguar...
 
 module.exports = function(cb) {
 
-    mongoose.connect(process.env.DATABASE_URL || 'mongodb+srv://user:user@fvk-h6afq.mongodb.net/test?retryWrites=true&w=majority', {
-        useCreateIndex: true, //Averiguar esto también...
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    }) //Conectamos, el newparser y unifiedTopology es para que no de error al conectar
+    const MONGODB_URI = process.env.DATABASE_URL || 'mongodb+srv://fvk_db:lHUbnmCusVyoqUsW@fvk.dh8lwzz.mongodb.net/?retryWrites=true&w=majority&appName=FVK';
+
+    mongoose.connect(MONGODB_URI) // <-- Sin opciones obsoletas
     .then(db => {
         console.log("Connected to Database!");
-        cb(null, db); // returns db in callback
+        cb(null, db);
     })
     .catch(err => {
-        console.error(err.message) //Si no, muestra en consola el error ocurrido.
+        console.error(err.message);
         cb(err);
     });
-}
+};

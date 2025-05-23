@@ -1,38 +1,57 @@
 const express = require('express');
-const directorios = require('path');
-const handlebars = require('express-handlebars');
-const method = require('method-override');
+const path = require('path');
+const { engine } = require('express-handlebars');
+const methodOverride = require('method-override');
 const flash = require('connect-flash');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
 const initDB = require('./config/database');
-const cookieParser = require('cookie-parser'); // Nuevo
 
 const app = express();
 
-// Configuración inicial
-app.set('secret', process.env.SECRET || 'endogeno');
-app.set('port', process.env.PORT || 3000);
-app.set('views', directorios.join(__dirname, 'views'));
+// Configuración de la base de datos
+initDB();
 
 // Configuración de Handlebars
-app.engine('.hbs', handlebars({
+app.engine('.hbs', engine({
     defaultLayout: 'main',
-    layoutsDir: directorios.join(app.get('views'), 'layouts'),
-    partialsDir: directorios.join(app.get('views'), 'partials'),
+    layoutsDir: path.join(app.get('views'), 'layouts'),
+    partialsDir: path.join(app.get('views'), 'partials'),
     extname: '.hbs'
 }));
 app.set('view engine', '.hbs');
 
-// Middlewares clave
+// Middlewares
 app.use(express.urlencoded({ extended: false }));
-app.use(method('_method'));
-app.use(cookieParser(app.get('secret'))); // Cookie-Parser con secreto
+app.use(methodOverride('_method'));
+app.use(cookieParser(process.env.SECRET || 'endogeno'));
+app.use(session({
+    secret: process.env.SECRET || 'endogeno',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false }
+}));
 app.use(flash());
 
-// Mensajes Flash
+// Middleware de autenticación JWT
+app.use((req, res, next) => {
+    const token = req.signedCookies.authorization;
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, process.env.SECRET || 'endogeno');
+            req.user = decoded;
+        } catch (error) {
+            res.clearCookie('authorization');
+        }
+    }
+    next();
+});
+
+// Variables globales para mensajes
 app.use((req, res, next) => {
     res.locals.success_msg = req.flash('success_msg');
     res.locals.error_msg = req.flash('error_msg');
-    res.locals.error = req.flash('error');
+    res.locals.user = req.user || null;
     next();
 });
 
@@ -45,13 +64,10 @@ app.use('/dojo', require('./routes/dojo'));
 app.use('/admin', require('./routes/admin'));
 
 // Archivos estáticos
-app.use(express.static(directorios.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Iniciar servidor
-initDB((err, db) => {
-    if (err) return process.exit(1);
-    app.set('db', db);
-    app.listen(app.get('port'), () => {
-        console.log('Servidor conectado en el puerto:', app.get('port'));
-    });
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor en puerto ${PORT}`);
 });
