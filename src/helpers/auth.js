@@ -1,63 +1,46 @@
-const { STATUS_CODES } = require('http');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-//Esto nos permite autenticar al usuario cada vez que este desee realizar una accion
 
+// Verificar autenticación via JWT
+exports.isAuthenticated = (req, res, next) => {
+    const token = req.signedCookies.authorization;
 
-
-// ES UN USUARIO VERIFICADO: INICIO SESION
-exports.isAuthenticated = (req, res, next) => { //A la cual creamos un metodo
-  let token = req.signedCookies.authorization;
-
-  if(!token) {
-    req.flash('error_msg', 'No token provided'); //Sino, error.
-    return res.redirect('/');
-  }
-  
-  /** id del usuario -> decoded: { _id: ObjectId } */
-  const decoded = jwt.verify(token, req.app.get('secret'));
-
-  User.findById(decoded._id)
-  .then(user => {
-    //no hay usuario
-    if(!user) {
-      req.flash('error_msg', 'User does not exist'); //Sino, error.
-      return res.redirect('/');
+    if (!token) {
+        req.flash('error_msg', 'Debes iniciar sesión primero');
+        return res.redirect('/login');
     }
 
-    // hay usuario
-    user.accessPermissions = user.permissions();
-    req.user = user;
-    next();
-  })
-  // error de conexión
-  .catch(err => {
-    req.flash('error_msg', err.message); //Sino, error.
-    return res.redirect('/');
-  });
-
+    try {
+        const decoded = jwt.verify(token, req.app.get('secret'));
+        User.findById(decoded._id)
+            .then(user => {
+                if (!user) {
+                    req.flash('error_msg', 'Usuario no existe');
+                    return res.clearCookie('authorization').redirect('/login');
+                }
+                req.user = user; // Adjunta el usuario a la solicitud
+                next();
+            })
+            .catch(() => res.redirect('/login'));
+    } catch (error) {
+        res.clearCookie('authorization').redirect('/login');
+    }
 };
 
-/** REQUERIMIENTO: ANTES DEBE PASAR POR isAuthenticated
- * router.use(isAuthenticated, isAdmin, adminRoute);
-*/
+// Verificar si es Administrador
 exports.isAdmin = (req, res, next) => {
-  const userPermissions = req.user.permissions();
+    if (req.user.role !== 'admin') { // Asume que el modelo User tiene un campo 'role'
+        req.flash('error_msg', 'Acceso no autorizado');
+        return res.redirect('/');
+    }
+    next();
+};
 
-  if(userPermissions.admin) {
-    return next();
-  }
-  return res.statusCode(404).end(STATUS_CODES[404]);
-}
-
-/** REQUERIMIENTO: ANTES DEBE PASAR POR isAuthenticated
- * router.use(isAuthenticated, isDojo, dojoRoute);
-*/
+// Verificar si es Dojo
 exports.isDojo = (req, res, next) => {
-  const userPermissions = req.user.permissions();
-
-  if(userPermissions.dojo) {
-    return next();
-  }
-  return res.statusCode(401).end(STATUS_CODES[401]);
-}
+    if (req.user.role !== 'dojo') {
+        req.flash('error_msg', 'Acceso no autorizado');
+        return res.redirect('/');
+    }
+    next();
+};
