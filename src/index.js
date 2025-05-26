@@ -1,25 +1,23 @@
-const express = require('express');
 const path = require('path');
-const { engine } = require('express-handlebars');
+const express = require('express');
+const exphbs = require('express-handlebars');
 const methodOverride = require('method-override');
 const flash = require('connect-flash');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-const initDB = require('./config/database');
-
 const app = express();
 
 // Configuración de la base de datos
-initDB();
+const connectDB = require('./config/database');
 
 // Configuración de Handlebars
-app.engine('.hbs', engine({
-    defaultLayout: 'main',
-    layoutsDir: path.join(app.get('views'), 'layouts'),
-    partialsDir: path.join(app.get('views'), 'partials'),
-    extname: '.hbs'
+app.engine('.hbs', exphbs.engine({
+  defaultLayout: 'main',
+  layoutsDir: path.join(__dirname, 'views/layouts'), // Ruta exacta
+  extname: '.hbs'
 }));
 app.set('view engine', '.hbs');
+app.set('views', path.join(__dirname, 'views')); 
 
 // Middlewares
 app.use(express.urlencoded({ extended: false }));
@@ -67,7 +65,12 @@ app.use('/admin', require('./routes/admin'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Iniciar servidor
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor en puerto ${PORT}`);
+const PORT = process.env.PORT || 3000;  // <-- Se define el puerto aquí
+
+// Iniciar servidor después de conectar a MongoDB
+connectDB().then(() => {
+    app.listen(PORT, () => {  
+        console.log('🚀 Servidor conectado en puerto:', PORT);
+        console.log('Ruta de layouts:', path.join(__dirname, 'views/layouts'));
+    });
 });
