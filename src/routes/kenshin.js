@@ -2,6 +2,7 @@
 const router = require('express').Router();
 const { isAuthenticated } = require('../helpers/auth');
 const User = require('../models/user');
+const Assignment = require('../models/equipment');
 
 // Perfil de estudiante
 router.get('/profile/:id', isAuthenticated, async (req, res) => {
@@ -31,19 +32,11 @@ router.put('/update/:id', isAuthenticated, async (req, res) => {
     }
 });
 
-// Registrar pago
-router.post('/payment/:id', isAuthenticated, async (req, res) => {
-    try {
-        const student = await User.findById(req.params.id);
-        student.pagos.push(req.body);
-        await student.save();
-        
-        req.flash('success_msg', 'Pago registrado');
-        res.redirect(`/kenshin/profile/${req.params.id}`);
-    } catch (error) {
-        req.flash('error_msg', 'Error al registrar pago');
-        res.redirect(`/kenshin/profile/${req.params.id}`);
-    }
+router.get('/asignaciones', isAuthenticated, async (req, res) => {
+  const assignments = await Assignment.find({ kenshin: req.user._id })
+    .populate('assignedBy');
+  
+  res.render('kenshin/assignments', { assignments });
 });
 
 module.exports = router;

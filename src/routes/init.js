@@ -1,6 +1,8 @@
 const { STATUS_CODES } = require('http');
 const router = require('express').Router();
 const Dojo = require('../models/dojo');
+const Admin = require('../models/admin');
+const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -15,7 +17,7 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   // Buscar en todas las colecciones
-  const models = { User, Dojo, Student };
+  const models = { Admin, Dojo, User };
   let user;
 
   for (const model of Object.values(models)) {
@@ -44,61 +46,15 @@ router.post('/login', async (req, res) => {
 
   // Redirección según rol
   const redirectPaths = {
-    admin: '/admin/dashboard',
+    admin: '/FVK/dashboard',
     dojo: '/dojo/dashboard',
-    student: '/student/profile'
+    student: '/kenshin/dashboard'
   };
 
   res.redirect(redirectPaths[user.role]);
 });
 
-// Ruta de registro (GET)
-router.get('/register', (req, res) => {
-    res.render('register');
-});
 
-// Ruta de registro (POST)
-router.post('/register', async (req, res) => {
-    const errors = [];
-    const { 
-        DojoName, 
-        DojoEmail, 
-        DojoPassword, 
-        PasswordConfirmation 
-    } = req.body;
-
-    // Validaciones básicas
-    if (!DojoName) errors.push({ text: 'Nombre del dojo requerido' });
-    if (!DojoEmail) errors.push({ text: 'Correo requerido' });
-    if (DojoPassword !== PasswordConfirmation) errors.push({ text: 'Contraseñas no coinciden' });
-
-    if (errors.length > 0) {
-        return res.render('register', { errors, ...req.body });
-    }
-
-    try {
-        const hashedPassword = bcrypt.hashSync(DojoPassword, 10);
-        const newDojo = new Dojo({
-            DojoName,
-            DojoEmail,
-            DojoPassword: hashedPassword,
-            activo: false,
-            solvente: false
-        });
-
-        await newDojo.save();
-        req.flash('success_msg', 'Registro exitoso. Espere validación.');
-        res.redirect('/');
-
-    } catch (error) {
-        if (error.code === 11000) {
-            req.flash('error_msg', 'Correo ya registrado');
-        } else {
-            req.flash('error_msg', 'Error en el servidor');
-        }
-        res.redirect('/register');
-    }
-});
 
 // Logout
 router.get('/logout', (req, res) => {
