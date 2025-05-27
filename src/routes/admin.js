@@ -45,6 +45,10 @@ router.get('/FVK/DojoRegister', isAuthenticated, checkPermissions({ administrati
     res.render('register');
 });
 
+router.get('/FVK/AdminRegister', isAuthenticated, checkPermissions({ administrativo : true }), (req, res) => {
+    res.render('admin/register');
+});
+
 // Registro de Dojos (POST)
 router.post('/register', isAuthenticated, checkPermissions({ administrativo : true }), async (req, res) => {
     const errors = [];

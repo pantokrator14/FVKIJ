@@ -5,7 +5,7 @@ const User = require('../models/user');
 const Assignment = require('../models/equipment');
 
 // Perfil de estudiante
-router.get('/profile/:id', isAuthenticated, async (req, res) => {
+router.get('/student/profile/:id', isAuthenticated, async (req, res) => {
     try {
         const student = await User.findById(req.params.id)
                                   .populate('dojoID');
@@ -21,7 +21,7 @@ router.get('/profile/:id', isAuthenticated, async (req, res) => {
 });
 
 // Actualizar perfil
-router.put('/update/:id', isAuthenticated, async (req, res) => {
+router.put('/student/update/:id', isAuthenticated, async (req, res) => {
     try {
         await User.findByIdAndUpdate(req.params.id, req.body);
         req.flash('success_msg', 'Perfil actualizado');
@@ -32,7 +32,7 @@ router.put('/update/:id', isAuthenticated, async (req, res) => {
     }
 });
 
-router.get('/asignaciones', isAuthenticated, async (req, res) => {
+router.get('/student/asignaciones', isAuthenticated, async (req, res) => {
   const assignments = await Assignment.find({ kenshin: req.user._id })
     .populate('assignedBy');
   

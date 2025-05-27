@@ -6,7 +6,7 @@ const Payment = require('../models/payment');
 
 // Ruta universal para pagos
 // Obtener todos los pagos de un tipo específico
-router.get('/:type(ingresos|egresos)', isAuthenticated, async (req, res) => {
+router.get('/pago/:type(ingresos|egresos)', isAuthenticated, async (req, res) => {
   const { type } = req.params;
   const user = req.user;
   
@@ -40,7 +40,7 @@ router.get('/:type(ingresos|egresos)', isAuthenticated, async (req, res) => {
 });
 
 // Crear nuevo pago
-router.post('/RealizarPago', isAuthenticated, async (req, res) => {
+router.post('/pago/RealizarPago', isAuthenticated, async (req, res) => {
   const { type, amount, description, to } = req.body;
   
   const newPayment = new Payment({
@@ -49,7 +49,7 @@ router.post('/RealizarPago', isAuthenticated, async (req, res) => {
     description,
     from: req.user._id,
     fromModel: req.user.role === 'dojo' ? 'Dojo' : 'User',
-    to: to || 'Federation', // ID de la federación
+    to: to || 'FVK', // ID de la federación
     toModel: req.user.role === 'admin' ? 'FVK' : 'Dojo'
   });
 
@@ -58,7 +58,7 @@ router.post('/RealizarPago', isAuthenticated, async (req, res) => {
 });
 
 // Confirmar/Cancelar pagos (solo admin)
-router.post('/:id/:action(confirmar|cancelar)', 
+router.post('/pago/:id/:action(confirmar|cancelar)', 
   checkPermissions({ finanzas: true }), 
   async (req, res) => {
     const status = req.params.action === 'confirmar' 

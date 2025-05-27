@@ -14,7 +14,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form action="/pagos" method="POST">
+        <form action="/RealizarPagos" method="POST">
           <input type="hidden" name="type" value="{{type}}">
           
           {{#eq type 'egresos'}}
@@ -22,9 +22,9 @@
               <label>Destinatario</label>
               <select class="form-control" name="to" required>
                 {{#if isAdmin}}
-                  <option value="Federation">Federación Internacional de Kendo</option>
+                  <option value="FVK">Federación Internacional de Kendo</option>
                 {{else}}
-                  <option value="Federation">Federación Venezolana de Kendo</option>
+                  <option value="FVK">Federación Venezolana de Kendo</option>
                   {{#each ../dojos}}
                     <option value="{{_id}}">{{name}}</option>
                   {{/each}}

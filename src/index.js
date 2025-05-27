@@ -55,11 +55,11 @@ app.use((req, res, next) => {
 
 // Rutas
 app.use('/', require('./routes/init'));
-app.use('/equipment', require('./routes/asignacion'));
-app.use('/payment', require('./routes/pago'));
-app.use('/kenshin', require('./routes/kenshin'));
+app.use('/equipos', require('./routes/asignacion'));
+app.use('/pago', require('./routes/pago'));
+app.use('/student', require('./routes/kenshin'));
 app.use('/dojo', require('./routes/dojo'));
-app.use('/admin', require('./routes/admin'));
+app.use('/FVK', require('./routes/admin'));
 
 // Archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));

@@ -3,22 +3,35 @@ const router = require('express').Router();
 const { isAuthenticated, isAdmin } = require('../helpers/auth');
 const Equipment = require('../models/equipment');
 
-// Asignar equipo
-router.post('/assign', isAuthenticated, isAdmin, async (req, res) => {
-    try {
-        const equipment = await Equipment.findById(req.body.equipmentId);
-        equipment.asignadoA = req.body.userId;
-        equipment.fechaAsignacion = Date.now();
-        
-        await equipment.save();
-        req.flash('success_msg', 'Equipo asignado correctamente');
-        res.redirect('/admin/equipment');
-    } catch (error) {
-        req.flash('error_msg', 'Error al asignar equipo');
-        res.redirect('/admin/equipment');
-    }
+router.get('/', isAuthenticated, async (req, res) => {
+  const query = req.user.role === 'admin' 
+    ? {} 
+    : { kenshin: req.user._id };
+
+  const assignments = await Assignment.find(query)
+    .populate('kenshin assignedBy');
+  
+  res.render('assignments/list', {
+    assignments,
+    isAdmin: req.user.role === 'admin'
+  });
 });
 
+// Asignar equipo
+router.post('/asignaciones/nuevoequipo', isAuthenticated, async (req, res) => {
+  try {
+    const { tipo, descripcion, responsable } = req.body;
+    const newEquipment = new Equipment({ tipo, descripcion, responsable });
+    
+    await newEquipment.save();
+    req.flash('success_msg', 'Equipo registrado exitosamente');
+    res.redirect('/equipment');
+    
+  } catch (error) {
+    req.flash('error_msg', 'Error al registrar equipo');
+    res.redirect('/asignaciones');
+  }
+});
 // Liberar equipo
 router.post('/release/:id', isAuthenticated, isAdmin, async (req, res) => {
     try {
@@ -28,10 +41,10 @@ router.post('/release/:id', isAuthenticated, isAdmin, async (req, res) => {
         });
         
         req.flash('success_msg', 'Equipo liberado');
-        res.redirect('/admin/equipment');
+        res.redirect('/FVK/Equipos');
     } catch (error) {
         req.flash('error_msg', 'Error al liberar equipo');
-        res.redirect('/admin/equipment');
+        res.redirect('/FVK/equipos');
     }
 });
 
