@@ -5,34 +5,27 @@
     <br>
     <br>
     <li class="nav-item">
-        <a href="/FVK/init" class="nav-link"><i class="fa fa-home"></i>  Inicio</a>
-    </li
-    <br>
-    <br>
-    {{#if (eq permissions.administrativo true)}}
-    <li class="nav-item">
-        <a href="/FVK/equipos" class="nav-link">
-            <i class="fas fa-box-open"></i> Equipos
-        </a>
+        <a href="/dojos/init" class="nav-link"><i class="fa fa-home"></i>  Inicio</a>
     </li>
     <br>
     <br>
     <li class="nav-item">
-        <a href="/FVK/list" class="nav-link"><i class="fa fa-address-card"></i>  Dojos</a>
+        <a href="/members" class="nav-link"><i class="fa fa-address-card"></i>  Membresía</a>
     </li>
     <br>
     <br>
-    {{/if}}
-
-    {{#if (eq permissions.finanzas true)}}
+    <li class="nav-item">
+        <a href="/config/{{_id}}" class="nav-link"><i class="fas fa-cog"></i>  Configuracion</a>
+    </li>
+    <br>
+    <br>
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-credit-card"></i>  Tesorería</a>
             <div class="dropdown-menu">
-                <a class="dropdown-item" href="/FVK/ingresos"><i class="fas fa-piggy-bank"></i>  Ingresos</a>
-                <a class="dropdown-item" href="/FVK/egresos"><i class="fas fa-hand-holding-usd"></i>Egresos</a>
+                <a class="dropdown-item" href="/ingresos"><i class="fas fa-piggy-bank"></i>  Ingresos</a>
+                <a class="dropdown-item" href="/egresos"><i class="fas fa-hand-holding-usd"></i>  Egresos</a>
             </div>
-    </li>
-    {{/if}}
+    </li> 
     <br>
     <br>
     <br>
