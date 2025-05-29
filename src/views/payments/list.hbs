@@ -1,0 +1,116 @@
+<div class="row">
+    <div class="col-sm-12 col-md-3 bg-dark">
+        
+        <div class="card-body">
+            {{#if isAdmin}}
+              {{> admin/sidebar}}
+            {{else if isDojo}}
+              {{> dojo/sidebar}}
+            {{else if isStudent}}
+              {{> student/sidebar}}
+            {{/if}}  
+        </div>
+    </div>
+
+    <div class="col-sm-12 col-md-9 content">
+            <div class="card-head jumbotron panel3" style="height: 350px">
+                <br><br>
+                <h1 class="title">Autoridades</h1>
+            </div>
+            <div class="card-body">
+                <hr>
+                <h3>¡Bienvenido!</h3>
+                <br>
+                <p>Este es el sistema administrativo para las autoridades de la Federación Venezolana de Kendo, Iaido y Jodo. Aquí podrá listar los dojos activos y aceptar nuevos, revisar las finanzas y actuar en consecuencia, así como registrar y asignar nuevos equipos.</p>
+                <hr>
+            </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+  <h2 class="mb-4">
+    {{#eq type 'ingresos'}}
+      <i class="fas fa-piggy-bank"></i> Ingresos
+    {{else}}
+      <i class="fas fa-hand-holding-usd"></i> Egresos
+    {{/eq}}
+  </h2>
+
+  <!-- Botón de Nueva Transacción (no admin) -->
+  {{#unless isAdmin}}
+    <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#transactionModal">
+      <i class="fas fa-plus-circle"></i> Nueva Transacción
+    </button>
+  {{/unless}}
+
+  <!-- Tabla de Transacciones -->
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th>Cantidad</th>
+          <th>
+            {{#eq type 'ingresos'}}
+              Remitente
+            {{else}}
+              Destinatario
+            {{/eq}}
+          </th>
+          <th>Fecha</th>
+          {{#if isAdmin}}<th>Estado</th><th>Acciones</th>{{/if}}
+        </tr>
+      </thead>
+      <tbody>
+        {{#each payments}}
+          <tr class="{{#eq status 'cancelado'}}table-danger{{/eq}}">
+            <td>${{amount}}</td>
+            <td>
+              {{#eq ../type 'ingresos'}}
+                {{#if from.name}}{{from.name}}{{else}}Sistema{{/if}}
+              {{else}}
+                {{#if to.name}}{{to.name}}{{else}}Sistema{{/if}}
+              {{/eq}}
+            </td>
+            <td>{{formatDate date "DD/MM/YYYY"}}</td>
+            
+            {{#if ../isAdmin}}
+              <td>
+                <span class="badge 
+                  {{#eq status 'confirmado'}}badge-success
+                  {{else if (eq status 'pendiente')}}badge-warning
+                  {{else}}badge-danger{{/eq}}">
+                  {{status}}
+                </span>
+              </td>
+              <td>
+                {{#eq status 'pendiente'}}
+                  <div class="btn-group">
+                    <form action="/pagos/{{_id}}/confirmar" method="POST">
+                      <button type="submit" class="btn btn-sm btn-success">
+                        <i class="fas fa-check"></i>
+                      </button>
+                    </form>
+                    <form action="/pagos/{{_id}}/cancelar" method="POST">
+                      <button type="submit" class="btn btn-sm btn-danger ml-2">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </form>
+                  </div>
+                {{/eq}}
+              </td>
+            {{/if}}
+          </tr>
+        {{else}}
+          <tr>
+            <td colspan="{{#if isAdmin}}5{{else}}3{{/if}}" class="text-center">
+              No hay transacciones registradas
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal de Transacción -->
+{{> payments/transactionModal }}

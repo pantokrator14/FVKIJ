@@ -2,21 +2,16 @@
 //Primero importamos la dependencia mongoose
 const mongoose = require('mongoose');
 
-mongoose.set('useFindAndModify', false); //Por averiguar...
+const connectDB = async () => {
+    try {
+        const MONGODB_URI = process.env.DATABASE_URL || 'mongodb+srv://fvk_db:lHUbnmCusVyoqUsW@fvk.dh8lwzz.mongodb.net/?retryWrites=true&w=majority&appName=FVK';
+        
+        await mongoose.connect(MONGODB_URI);
+        console.log("✅ Conectado a MongoDB");
+    } catch (error) {
+        console.error("❌ Error de conexión a MongoDB:", error.message);
+        process.exit(1);
+    }
+};
 
-module.exports = function(cb) {
-
-    mongoose.connect(process.env.DATABASE_URL || 'mongodb+srv://user:user@fvk-h6afq.mongodb.net/test?retryWrites=true&w=majority', {
-        useCreateIndex: true, //Averiguar esto también...
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    }) //Conectamos, el newparser y unifiedTopology es para que no de error al conectar
-    .then(db => {
-        console.log("Connected to Database!");
-        cb(null, db); // returns db in callback
-    })
-    .catch(err => {
-        console.error(err.message) //Si no, muestra en consola el error ocurrido.
-        cb(err);
-    });
-}
+module.exports = connectDB;

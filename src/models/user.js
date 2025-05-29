@@ -22,7 +22,7 @@ const userSchema = new Schema({
         name: { type: String },
         obtainedAt: { type: Date }
     },   //Grade
-    gender : {type : String, required : true}, // mujer, hombre, otro
+    gender : {type : String, required : true}, // mujer, hombre
     height : {type : Number, required : true},
     weight : {type : Number, required : true},
     direccion : {type : String, required : true},

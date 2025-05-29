@@ -1,187 +1,73 @@
-//Aqui va la configuracion para los pagos. Es similar al resto.
-const router = require('express').Router(); //Enrutador
+// routes/payments.js
+const express = require('express');
+const router = express.Router();
+const { isAuthenticated, checkPermissions } = require('../helpers/auth');
+const Payment = require('../models/payment');
 
-//Modelo de datos
-const pago = require('../models/payment');
+// Ruta universal para pagos
+// Obtener todos los pagos de un tipo específico
+router.get('/pago/:type(ingresos|egresos)', isAuthenticated, async (req, res) => {
+  const { type } = req.params;
+  const user = req.user;
+  
+  // Construir query dinámico
+  const query = { 
+    type: type === 'ingresos' ? 'ingreso' : 'egreso',
+    $or: []
+  };
 
-const { isAuthenticated } = require('../helpers/auth'); //Para asegurarse de que se esta autenticado para realizar las acciones.
+  // Lógica para diferentes roles
+  if (user.role === 'admin') {
+    // Admins ven todos los pagos de la federación
+    query.toModel = 'FVK';
+  } else if (user.role === 'dojo') {
+    // Dojos ven sus propias transacciones
+    query.$or.push(
+      { from: user._id, fromModel: 'Dojo' }, // Egresos del dojo
+      { to: user._id, toModel: 'Dojo' } // Ingresos al dojo
+    );
+  }
 
-//NOTA:  Vamos a repetir el mismo código de registro y muestra tanto de egresos como de ingresos, no sé qué método puede evitar esta repeticion de codigo, pero una vez lo sepa, lo acomodaré.
+  const payments = await Payment.find(query)
+    .populate('from to')
+    .sort('-date');
 
-//----------------------------------------------------------
-
-//DOJO
-//Ingresos 
-
-
-//------------------------------------------
-//Mostrar ingresos
-router.get('/dojos/ingresos', isAuthenticated, async (req, res) => {
-    const ingresos = await pago.find({destinatario : req.params.id});
-    res.render('dojos/ingresos', {ingresos}); //Pagina para ingresos
+  res.render('payments/list', {
+    payments,
+    type,
+    isAdmin: user.role === 'admin'
+  });
 });
 
-//Crear ingreso
-router.post('/dojos/ingresos', isAuthenticated, async (req, res) => { //Proceso asincrono
-    const errors = []; //Lista de errores
-    const  {emisor, cantidad, descripcion} = req.body; //solicitamos del formulario los datos.
+// Crear nuevo pago
+router.post('/pago/RealizarPago', isAuthenticated, async (req, res) => {
+  const { type, amount, description, to } = req.body;
+  
+  const newPayment = new Payment({
+    type,
+    amount,
+    description,
+    from: req.user._id,
+    fromModel: req.user.role === 'dojo' ? 'Dojo' : 'User',
+    to: to || 'FVK', // ID de la federación
+    toModel: req.user.role === 'admin' ? 'FVK' : 'Dojo'
+  });
 
-    //validacion de errores
-    if(!emisor) { //Si no hay emisor
-        errors.push({text : 'Debe ingresar el emisor'}); //Guarda error en el arreglo para mostrar más tarde.
-    }
-    if (!cantidad) { //Si no hay cantidad
-        errors.push({text : 'Debe ingresar la cantidad'});
-    }
-    if (!descripcion) { //Si no hay descripcion
-        errors.push({text : 'Debe ingresar una descripcion'});
-    }
-    //Ahora si hay errores en la lista
-    if(errors.length > 0){
-        //Entonces nos redirigimos a la página de ingresos y se muestran los errores
-        res.render('/dojos/ingresos', {errors, emisor, cantidad, descripcion});
-    } else { //Sino, creamos el registro
-        const newPago = new pago({
-            emisor, 
-            cantidad, 
-            descripcion
-        });
-        newPago.destinatario = req.user.id; //El destinatario sera el usuario
-        await newPago.save(); //Guardamos
-        req.flash('success_msg', 'Ingreso registrado correctamente.') //Mostramos el mensaje
-        res.redirect('/dojos/ingresos'); //Y redireccionamos a la pagina
-    }
+  await newPayment.save();
+  res.redirect(`/pagos/${type === 'ingreso' ? 'ingresos' : 'egresos'}`);
 });
 
-//-----------------------------------------------
+// Confirmar/Cancelar pagos (solo admin)
+router.post('/pago/:id/:action(confirmar|cancelar)', 
+  checkPermissions({ finanzas: true }), 
+  async (req, res) => {
+    const status = req.params.action === 'confirmar' 
+      ? 'confirmado' 
+      : 'cancelado';
+    
+    await Payment.findByIdAndUpdate(req.params.id, { status });
+    res.redirect('back');
+  }
+);
 
-//Egresos
-router.get('/dojos/egresos', isAuthenticated, async (req, res) => {
-    const egresos = await pago.find({emisor : req.params.id});
-    res.render('dojos/egresos', {egresos}); //Pagina para ingresos
-});
-
-//Crear Egreso
-router.post('/dojos/egresos', isAuthenticated, async (req, res) => { //Proceso asincrono
-    const errors = []; //Lista de errores
-    const  {destinatario, cantidad, descripcion} = req.body; //solicitamos del formulario los datos.
-
-    //validacion de errores
-    if(!destinatario) { //Si no hay emisor
-        errors.push({text : 'Debe ingresar el destinatario'}); //Guarda error en el arreglo para mostrar más tarde.
-    }
-    if (!cantidad) { //Si no hay cantidad
-        errors.push({text : 'Debe ingresar la cantidad'});
-    }
-    if (!descripcion) { //Si no hay descripcion
-        errors.push({text : 'Debe ingresar una descripcion'});
-    }
-    //Ahora si hay errores en la lista
-    if(errors.length > 0){
-        //Entonces nos redirigimos a la página de ingresos y se muestran los errores
-        res.render('/dojos/egresos', {errors, destinatario, cantidad, descripcion});
-    } else { //Sino, creamos el registro
-        const newPago = new pago({
-            destinatario, 
-            cantidad, 
-            descripcion
-        });
-        newPago.emisor = req.user.id; //El destinatario sera el usuario
-        await newPago.save(); //Guardamos
-        req.flash('success_msg', 'Ingreso registrado correctamente.') //Mostramos el mensaje
-        res.redirect('/dojos/egresos'); //Y redireccionamos a la pagina
-    }
-});
-
-
-//---------------------------------------------
-
-//ADMIN
-//Ingresos
-//------------------------------------------
-//Mostrar ingresos
-router.get('/FVK/ingresos', isAuthenticated, async (req, res) => {
-    const ingresos = await pago.find({destinatario : req.params.id});
-    res.render('admin/FVK-ingresos', {ingresos}); //Pagina para ingresos
-});
-
-//Crear ingreso
-router.post('/FVK/ingresos', isAuthenticated, async (req, res) => { //Proceso asincrono
-    const errors = []; //Lista de errores
-    const  {emisor, cantidad, descripcion} = req.body; //solicitamos del formulario los datos.
-
-    //validacion de errores
-    if(!emisor) { //Si no hay emisor
-        errors.push({text : 'Debe ingresar el emisor'}); //Guarda error en el arreglo para mostrar más tarde.
-    }
-    if (!cantidad) { //Si no hay cantidad
-        errors.push({text : 'Debe ingresar la cantidad'});
-    }
-    if (!descripcion) { //Si no hay descripcion
-        errors.push({text : 'Debe ingresar una descripcion'});
-    }
-    //Ahora si hay errores en la lista
-    if(errors.length > 0){
-        //Entonces nos redirigimos a la página de ingresos y se muestran los errores
-        res.render('/FVK/ingresos', {errors, emisor, cantidad, descripcion});
-    } else { //Sino, creamos el registro
-        const newPago = new pago({
-            emisor, 
-            cantidad, 
-            descripcion
-        });
-        newPago.destinatario = req.user.id; //El destinatario sera el usuario
-        await newPago.save(); //Guardamos
-        req.flash('success_msg', 'Ingreso registrado correctamente.') //Mostramos el mensaje
-        res.redirect('/FVK/ingresos'); //Y redireccionamos a la pagina
-    }
-});
-
-//-----------------------------------------------
-
-//Egresos
-//Mostrar egresos
-router.get('/FVK/egresos', isAuthenticated, async (req, res) => {
-    const egresos = await pago.find({emisor : req.params.id});
-    res.render('admin/FVK-egresos', {egresos}); //Pagina para egresos
-});
-
-//Crear Egreso
-router.post('/FVK/egresos', isAuthenticated, async (req, res) => { //Proceso asincrono
-    const errors = []; //Lista de errores
-    const  {destinatario, cantidad, descripcion} = req.body; //solicitamos del formulario los datos.
-
-    //validacion de errores
-    if(!destinatario) { //Si no hay emisor
-        errors.push({text : 'Debe ingresar el destinatario'}); //Guarda error en el arreglo para mostrar más tarde.
-    }
-    if (!cantidad) { //Si no hay cantidad
-        errors.push({text : 'Debe ingresar la cantidad'});
-    }
-    if (!descripcion) { //Si no hay descripcion
-        errors.push({text : 'Debe ingresar una descripcion'});
-    }
-    //Ahora si hay errores en la lista
-    if(errors.length > 0){
-        //Entonces nos redirigimos a la página de ingresos y se muestran los errores
-        res.render(egresos, {errors, destinatario, cantidad, descripcion});
-    } else { //Sino, creamos el registro
-        const newPago = new pago({
-            destinatario, 
-            cantidad, 
-            descripcion
-        });
-        newPago.emisor = req.user.id; //El destinatario sera el usuario
-        await newPago.save(); //Guardamos
-        req.flash('success_msg', 'Ingreso registrado correctamente.') //Mostramos el mensaje
-        res.redirect('/FVK/egresos'); //Y redireccionamos a la pagina
-    }
-});
-
-//---------------------------------------------------------
-
-
-
-
-//Exportamos todo para usarlo en el archivo principal
 module.exports = router;

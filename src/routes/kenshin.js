@@ -1,158 +1,42 @@
 //Aqui se van a colocar las configuraciones para inicio de sesion y registro de usuarios.
-const router = require('express').Router(); //Solicitamos el enrutador.
-const passport = require('passport'); // solicitamos el passport para hacer las validaciones.
+const router = require('express').Router();
+const { isAuthenticated } = require('../helpers/auth');
+const User = require('../models/user');
+const Assignment = require('../models/equipment');
 
-//Requerimos ahora el modelo que creamos para los usuarios
-const usuario = require('../models/user');
-
-const {isAuthenticated} = require('../helpers/auth'); //Usamos esto para asegurarnos de que se está autenticado para realizar las acciones
-
-//Para el registro del usuario
-router.post('/dojos/members/ingreso', isAuthenticated, async (req, res) => { //Declaramos un proceso asincrono
-    const errors = []; //Que tomara una lista de errores los cuales se mostraran en el formulario
-    //Solicitamos la informacion del formulario
-    const {nombre, cedula, email, fechaNacimiento, password, confirmacion, genero, grado, direccion, peso, altura} = req.body;
-    
-    //Empezamos a definir los errores
-    if(!nombre){ //Si no se escribio el nombre
-        errors.push({text : 'Ingrese un nombre.'}); //Mandar este mensaje
-    }
-    if(!cedula){ //Si no se la cedula
-        errors.push({text : 'Ingrese la cedula de identidad.'});
-    }
-    if(!password){ //Si no se ingreso contraseña
-        errors.push({text : 'Escriba una contraseña.'});
-    }
-    if(password.length < 4 || password.length > 12){ //Si la longitud de la contraseña es menor a 4 digitos o mayor a 12
-        errors.push({text : 'La contraseña debe ser mayor a 4 digitos y menor que 12.'});
-    }
-    if(password != confirmacion){ //Si las contraseñas no son iguales
-        errors.push({text : 'Las contraseñas no coinciden.'});
-    }
-    if(!email){ //Si no se escribio el correo
-        errors.push({text : 'Ingrese correo electronico.'});
-    }
-    if(cedula.length != 8){ //Si la cedula es mayor o menor a 8 digitos
-        errors.push({text : 'La cedula debe tener de 8 digitos.'});
-    }
-    if(!fechaNacimiento){ //Si no hay fecha de nacimiento
-        errors.push({text : 'Ingrese la fecha de nacimiento del kenshi.'});
-    }
-    if(!grado){ // Si no hay grado
-        errors.push({text : 'Ingrese el grado de instruccion del kenshi.'});
-    }
-    if(!genero){ //Si no se ha decidido el genero
-        errors.push({text : 'Ingrese el genero del kenshi.'});
-    }
-    if(!direccion){
-        errors.push({text : 'Ingrese una direccion.'});
-    }
-    if(!altura){
-        errors.push({text : 'Ingrese la altura del kenshi.'});
-    }
-    if(!peso){
-        errors.push({text : 'Ingrese el peso del kenshi.'});
-    }
-    //Ahora, si hay errores en la lista
-    if(errors.length > 0){
-        //Entonces nos redigirimos al formulario de registro mostrando los errores
-        res.render('dojos/dojo-members', {errors, nombre, email, cedula, password, confirmacion, fechaNacimiento, peso, altura, grado, genero, direccion});
-    } else { //Sino, revisamos si no existe un email ya registrado 
-        const emailUsuario = await usuario.findOne({email : email});
-        //Si existe
-        if(emailUsuario){
-            req.flash('error_msg', 'Ya existe un dojo registrado con ese correo electronico.'); //Enviamos este mensaje
-            res.redirect('/dojos/members'); //Y redireccionamos
-        } else { //Finalmente, si no ha ocurrido nada de eso, registramos
-            //Guardamos todo en un nuevo objeto
-            const newUser = new usuario({nombre, email, cedula, password, fechaNacimiento, grado, genero, direccion, peso, altura});
-            newUser.dojoID = req.user._id; //Ingresamos de forma automatica el id del dojo al que pertenece
-            //Encriptamos la contraseña
-            newUser.password = await newUser.encryptPassword(password);
-            //Guardamos
-            await newUser.save();
-            console.log(newUser); //Mostramos por consola los datos para verificar
-            //enviar mensaje
-            req.flash('success_msg', 'El kenshin ha sido registrado con exito. Puede ingresar.');
-            //Redireccionamos a la pagina de inicio
-            res.redirect('/dojos/members');
-        }
+// Perfil de estudiante
+router.get('/student/profile/:id', isAuthenticated, async (req, res) => {
+    try {
+        const student = await User.findById(req.params.id)
+                                  .populate('dojoID');
+        
+        res.render('kenshin/profile', {
+            layout: 'kenshin',
+            student
+        });
+    } catch (error) {
+        req.flash('error_msg', 'Estudiante no encontrado');
+        res.redirect('/dojo/members');
     }
 });
 
-//-------------------------------------------------------------------------------------
-
-// Para la página de inicio
-router.get('/kenshi/init', isAuthenticated, (req, res) => {
-    res.render('kenshis/kenshi-init');
+// Actualizar perfil
+router.put('/student/update/:id', isAuthenticated, async (req, res) => {
+    try {
+        await User.findByIdAndUpdate(req.params.id, req.body);
+        req.flash('success_msg', 'Perfil actualizado');
+        res.redirect(`/kenshin/profile/${req.params.id}`);
+    } catch (error) {
+        req.flash('error_msg', 'Error al actualizar');
+        res.redirect(`/kenshin/profile/${req.params.id}`);
+    }
 });
 
-//--------------------------------------------------------------------------------------------
-
-// Para la página de configuracion del kenshi especifico
-router.get('/config/:id', isAuthenticated, async (req, res) => {
-    const data = await usuario.findById(req.params.id); //buscamos los datos del usuario a traves de su id
-    res.render('kenshis/config', {data}); //Los ponemos en la vista para ser modificados
+router.get('/student/asignaciones', isAuthenticated, async (req, res) => {
+  const assignments = await Assignment.find({ kenshin: req.user._id })
+    .populate('assignedBy');
+  
+  res.render('kenshin/assignments', { assignments });
 });
-
-//Esto es para actualizar
-router.put('/config/edit/:id', isAuthenticated, async (req, res) => {
-    //Solicitamos la informacion del formulario
-    const {nombre, cedula, email, fechaNacimiento, genero, grado, direccion, peso, altura} = req.body;
-    //Buscamos y modificamos.
-    await usuario.findByIdAndUpdate(req.params.id, {nombre, cedula, email, fechaNacimiento, genero, grado, direccion, peso, altura});
-    req.flash('success_msg', 'Informacion modificada'); //Enviamos mensaje
-    res.redirect('/kenshi/init'); //Redireccionamos al inicio.
-});
-
-
-//Para declarar solvencia (DOJOS)
-router.put('/miembro/solvencia/:id', isAuthenticated, async (req, res) => {
-    await usuario.findByIdAndUpdate(req.params.id, { solvente : true }); //buscamos y actualizamos
-    req.flash('success_msg', 'Acceso al dojo autorizado.'); //Mostramos mensaje
-    res.redirect('/dojos/members'); //Redireccionamos
-});
-
-//Declarar insolvencia (DOJOS)
-router.put('/miembro/insolvencia/:id', isAuthenticated, async (req, res) => {
-    await usuario.findByIdAndUpdate(req.params.id, { solvente : false }); //buscamos y actualizamos
-    req.flash('success_msg', 'Acceso al dojo autorizado.'); //Mostramos mensaje
-    res.redirect('/dojos/members'); //Redireccionamos
-});
-
-
-//---------------------------------------------------------------------
-
-
-//Eliminar usuario (Sólo lo pueden hacer los dojos)
-router.delete('miembro/delete/:id', isAuthenticated, async (req, res) => {
-    await usuario.findByIdAndDelete(req.params.id);
-    req.flash('success_msg', 'Usuario borrado satisfactoriamente');
-  res.redirect('/dojos/members');
-});
-
-//---------------------------------------------------------------------
-
-
-//Para el login de usuario
-router.post('/kinit', (req, res, next) => {
-    console.log(req.body)
-    next()
-},
-passport.authenticate('local', {
-        successRedirect: '/kenshi/init', //Si hay exito, redirecciona al panel del usuario
-        failureRedirect: '/', //Sino reaparece en la misma página
-        failureFlash: true //Investigar
-}));
-
-
-//Logout
-router.get('/users/logout', (req, res) => { //Indagar un poco
-    req.logout(), //Realizamos el proceso de salida
-    req.flash('success_msg', 'Salida satisfactoria'), //Dejar mensaje
-    res.redirect('/') //Y Redireccionar a la pagina principal
-});
-
-//----------------------------------------------------------------------
 
 module.exports = router;
