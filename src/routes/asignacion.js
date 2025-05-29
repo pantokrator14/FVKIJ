@@ -3,7 +3,7 @@ const router = require('express').Router();
 const { isAuthenticated, isAdmin } = require('../helpers/auth');
 const Equipment = require('../models/equipment');
 
-router.get('/', isAuthenticated, async (req, res) => {
+router.get('/equipos', isAuthenticated, async (req, res) => {
   const query = req.user.role === 'admin' 
     ? {} 
     : { kenshin: req.user._id };
@@ -18,7 +18,7 @@ router.get('/', isAuthenticated, async (req, res) => {
 });
 
 // Asignar equipo
-router.post('/asignaciones/nuevoequipo', isAuthenticated, async (req, res) => {
+router.post('/equipos/nuevoequipo', isAuthenticated, async (req, res) => {
   try {
     const { tipo, descripcion, responsable } = req.body;
     const newEquipment = new Equipment({ tipo, descripcion, responsable });

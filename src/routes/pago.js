@@ -41,20 +41,60 @@ router.get('/pago/:type(ingresos|egresos)', isAuthenticated, async (req, res) =>
 
 // Crear nuevo pago
 router.post('/pago/RealizarPago', isAuthenticated, async (req, res) => {
-  const { type, amount, description, to } = req.body;
+  const { type, amount, description } = req.body;
   
-  const newPayment = new Payment({
-    type,
-    amount,
-    description,
-    from: req.user._id,
-    fromModel: req.user.role === 'dojo' ? 'Dojo' : 'User',
-    to: to || 'FVK', // ID de la federación
-    toModel: req.user.role === 'admin' ? 'FVK' : 'Dojo'
-  });
+  try {
+    const newPayment = new Payment({
+      type,
+      amount,
+      description,
+      status: 'pendiente',
+      date: new Date()
+    });
 
-  await newPayment.save();
-  res.redirect(`/pagos/${type === 'ingreso' ? 'ingresos' : 'egresos'}`);
+    // Asignar participantes según el rol
+    if (req.user.role === 'admin') {
+      if (type === 'ingreso') {
+        newPayment.toModel = 'FVK';
+        newPayment.from = to; // ID del dojo/usuario
+        newPayment.fromModel = to.startsWith('dojo_') ? 'Dojo' : 'User';
+      } else {
+        newPayment.fromModel = 'FVK';
+        newPayment.to = to; // ID del dojo/usuario
+        newPayment.toModel = to.startsWith('dojo_') ? 'Dojo' : 'User';
+      }
+    } else if (req.user.role === 'dojo') {
+      if (type === 'ingreso') {
+        newPayment.toModel = 'Dojo';
+        newPayment.to = req.user._id;
+        newPayment.from = to; // ID del kenshin
+        newPayment.fromModel = 'User';
+      } else {
+        newPayment.fromModel = 'Dojo';
+        newPayment.from = req.user._id;
+        newPayment.toModel = 'FVK'; // Egresos siempre a la federación
+      }
+    } else if (req.user.role === 'kenshin') {
+      newPayment.type = 'egreso';
+        newPayment.fromModel = 'User';
+        newPayment.from = req.user._id;
+        newPayment.toModel = 'Dojo';
+        
+        // Obtener automáticamente el dojo del usuario
+        if (!req.user.dojo || !req.user.dojo._id) {
+          throw new Error('No tienes un dojo asignado');
+        }
+        newPayment.to = req.user.dojo._id;
+    }
+
+    await newPayment.save();
+    req.flash('success_msg', 'Pago registrado exitosamente');
+    res.redirect(`/pago/${type === 'ingreso' ? 'ingresos' : 'egresos'}`);
+    } catch (error) {
+      console.error(error);
+      req.flash('error_msg', error.message || 'Error al registrar el pago');
+      res.redirect('back');
+    }
 });
 
 // Confirmar/Cancelar pagos (solo admin)

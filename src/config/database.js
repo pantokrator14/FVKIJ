@@ -1,10 +1,14 @@
 //Aquí va la conexión a la base de datos
 //Primero importamos la dependencia mongoose
 const mongoose = require('mongoose');
+require('dotenv').config(); // Añadir para cargar variables de entorno
 
 const connectDB = async () => {
     try {
-        const MONGODB_URI = process.env.DATABASE_URL || 'mongodb+srv://fvk_db:lHUbnmCusVyoqUsW@fvk.dh8lwzz.mongodb.net/?retryWrites=true&w=majority&appName=FVK';
+        const MONGODB_URI = process.env.DATABASE_URL;
+        if (!MONGODB_URI) {
+            throw new Error("DATABASE_URL no definida en .env");
+        }
         
         await mongoose.connect(MONGODB_URI);
         console.log("✅ Conectado a MongoDB");

@@ -5,7 +5,7 @@ const Dojo = require('../models/dojo');
 const User = require('../models/user');
 
 // Panel del dojo
-router.get('/dashboard', isAuthenticated, async (req, res) => {
+router.get('/dojo/dashboard', isAuthenticated, async (req, res) => {
     try {
         const dojoData = await Dojo.findById(req.user._id);
         res.render('dojo/dashboard', { 
@@ -19,7 +19,7 @@ router.get('/dashboard', isAuthenticated, async (req, res) => {
 });
 
 // Lista de miembros
-router.get('/members', isAuthenticated, async (req, res) => {
+router.get('/dojo/members', isAuthenticated, async (req, res) => {
     try {
         const activeUsers = await User.find({ 
             dojoID: req.user._id, 
@@ -59,10 +59,10 @@ router.delete('/delete/:id', isAuthenticated, isAdmin, async (req, res) => {
     try {
         await Dojo.findByIdAndDelete(req.params.id);
         req.flash('success_msg', 'Dojo eliminado exitosamente');
-        res.redirect('/admin/dojos');
+        res.redirect('/FVK/dojos');
     } catch (error) {
         req.flash('error_msg', 'Error al eliminar dojo');
-        res.redirect('/admin/dojos');
+        res.redirect('/FVK/dojos');
     }
 });
 

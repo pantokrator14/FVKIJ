@@ -16,24 +16,18 @@ router.get('/', (req, res) => {
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
-  // Buscar en todas las colecciones
-  const models = { Admin, Dojo, User };
-  let user;
+  // Buscar solo en el modelo unificado User
+  const user = await User.findOne({ email }).select('+password');
 
-  for (const model of Object.values(models)) {
-    user = await model.findOne({ email }).select('+password');
-    if (user) break;
-  }
-
-  if (!user || !bcrypt.compareSync(password, user.password)) {
+  if (!user || !(await user.matchPassword(password))) {
     return res.status(401).render('login', { error: 'Credenciales inválidas' });
   }
 
+  // Payload simplificado
   const tokenPayload = {
     _id: user._id,
     role: user.role,
-    adminType: user.adminType,
-    permissions: user.permissions
+    name: user.name
   };
 
   const token = jwt.sign(tokenPayload, process.env.SECRET, { expiresIn: '4h' });
@@ -46,12 +40,14 @@ router.post('/login', async (req, res) => {
 
   // Redirección según rol
   const redirectPaths = {
-    admin: '/FVK/dashboard',
+    secretario: '/FVK/dashboard',
+    tesorero: '/FVK/dashboard',
+    presidente: '/FVK/dashboard',
     dojo: '/dojo/dashboard',
-    student: '/kenshin/dashboard'
+    kenshin: '/student/dashboard' // Corregido a 'kenshin'
   };
 
-  res.redirect(redirectPaths[user.role]);
+  res.redirect(redirectPaths[user.role] || '/');
 });
 
 
