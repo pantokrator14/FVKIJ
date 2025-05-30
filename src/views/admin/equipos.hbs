@@ -1,0 +1,241 @@
+<div class="row">
+    <div class="col-sm-12 col-md-3 bg-dark">
+        
+        <div class="card-body">
+            {{> admin/sidebar}}
+        </div>
+    </div>
+
+    <!--Aquí va el contenido-->
+
+    <div class="col-md-9 container mt-4">
+        <h1 class="mb-4">
+            <i class="fas fa-archive"></i> Gestión de Equipos
+            <button class="btn btn-primary float-right" data-toggle="modal" data-target="#newEquipmentModal">
+            <i class="fas fa-plus"></i> Nuevo Equipo
+            </button>
+        </h1>
+
+        <div class="row">
+            {{#each equipments}}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">{{type}}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">{{description}}</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <strong>N° Serie:</strong> {{serialNumber}}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Estado:</strong> 
+                                <span class="badge 
+                                {{#eq status 'disponible'}}badge-success
+                                {{else if (eq status 'asignado')}}badge-primary
+                                {{else if (eq status 'en_reparacion')}}badge-warning
+                                {{else}}badge-danger{{/eq}}">
+                                {{status}}
+                                </span>
+                            </li>
+                            {{#if assignedTo}}
+                            <li class="list-group-item">
+                                <strong>Asignado a:</strong> {{assignedTo.name}}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Fecha asignación:</strong> {{formatDate dateAssigned "DD/MM/YYYY"}}
+                            </li>
+                            {{/if}}
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group">
+                            {{#eq status 'disponible'}}
+                                <button class="btn btn-sm btn-info assign-btn" data-id="{{_id}}" data-toggle="modal" data-target="#assignModal">
+                                <i class="fas fa-user-check"></i> Asignar
+                                </button>
+                            {{/eq}}
+                            
+                            {{#eq status 'asignado'}}
+                                <form action="/FVK/equipos/liberar/{{_id}}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-undo"></i> Liberar
+                                </button>
+                                </form>
+                            {{/eq}}
+                            
+                            <button class="btn btn-sm btn-danger delete-btn" data-id="{{_id}}">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                            
+                            <button class="btn btn-sm btn-secondary edit-btn" data-toggle="modal" data-target="#editModal" 
+                                data-id="{{_id}}" data-type="{{type}}" data-description="{{description}}" 
+                                data-serial="{{serialNumber}}" data-notes="{{notes}}">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{else}}
+            <div class="col-12">
+                <div class="alert alert-info">
+                No hay equipos registrados
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+
+    <!-- Modal Nuevo Equipo -->
+    <div class="modal fade" id="newEquipmentModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Registrar Nuevo Equipo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+                <form action="/FVK/equipos" method="POST">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Tipo *</label>
+                            <select name="type" class="form-control" required>
+                                <option value="shinai">Shinai</option>
+                                <option value="bokken">Bokken</option>
+                                <option value="iaito">Iaito</option>
+                                <option value="bogu">Bogu (Armadura)</option>
+                                <option value="uniforme">Uniforme</option>
+                                <option value="otros">Otros</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Descripción *</label>
+                            <textarea name="description" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Número de Serie</label>
+                            <input type="text" name="serialNumber" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Registrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Asignar Equipo -->
+    <div class="modal fade" id="assignModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Asignar Equipo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="assignForm" method="POST">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Seleccionar Kenshin *</label>
+                            <select name="kenshinId" class="form-control" required>
+                            {{#each kenshins}}
+                                <option value="{{_id}}">{{name}} ({{dojo.name}})</option>
+                            {{/each}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Asignar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Equipo -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Equipo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            <form id="editForm" method="POST">
+                <input type="hidden" name="_method" value="PUT">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Tipo *</label>
+                            <select name="type" class="form-control" required>
+                            <option value="shinai">Shinai</option>
+                            <option value="bokken">Bokken</option>
+                            <option value="iaito">Iaito</option>
+                            <option value="bogu">Bogu</option>
+                            <option value="uniforme">Uniforme</option>
+                            <option value="otros">Otros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción *</label>
+                        <textarea name="description" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Número de Serie</label>
+                        <input type="text" name="serialNumber" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Notas</label>
+                        <textarea name="notes" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+<!-- Script para manejo de equipos -->
+<script>
+$(document).ready(() => {
+  // Asignar equipo
+  $('.assign-btn').click(function() {
+    const equipmentId = $(this).data('id');
+    $('#assignForm').attr('action', `/admin/equipos/asignar/${equipmentId}`);
+  });
+  
+  // Editar equipo
+  $('.edit-btn').click(function() {
+    const equipmentId = $(this).data('id');
+    const type = $(this).data('type');
+    const description = $(this).data('description');
+    const serial = $(this).data('serial');
+    const notes = $(this).data('notes');
+    
+    $('#editForm').attr('action', `/admin/equipos/${equipmentId}`);
+    $('#editForm select[name="type"]').val(type);
+    $('#editForm textarea[name="description"]').val(description);
+    $('#editForm input[name="serialNumber"]').val(serial);
+    $('#editForm textarea[name="notes"]').val(notes);
+  });
+  
+  // Eliminar equipo
+  $('.delete-btn').click(function() {
+    const equipmentId = $(this).data('id');
+    if (confirm('¿Estás seguro de eliminar este equipo?')) {
+      fetch(`/admin/equipos/${equipmentId}`, { method: 'DELETE' })
+        .then(() => window.location.reload());
+    }
+  });
+});
+</script>

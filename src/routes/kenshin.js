@@ -5,6 +5,24 @@ const User = require('../models/user');
 const Assignment = require('../models/equipment');
 
 // Perfil de estudiante
+router.get('/student/dashboard', isAuthenticated, async (req, res) => {
+  try {
+    const isSolvent = await req.user.isSolvent(); // Implementar en modelo User
+    
+    res.render('dashboard', {
+      layout: 'kenshin',
+      isStudent: true,
+      currentUser: req.user,
+      showSolvencyWarning: !isSolvent
+    });
+  } catch (error) {
+    console.error(error);
+    req.flash('error_msg', 'Error al cargar el panel');
+    res.redirect('/');
+  }
+});
+
+
 router.get('/profile/:id', isAuthenticated, async (req, res) => {
   try {
     const student = await User.findById(req.params.id);
@@ -31,15 +49,5 @@ router.put('/update/:id', isAuthenticated, async (req, res) => {
     }
 });
 
-router.get('/pagos', isAuthenticated, (req, res) => {
-  res.redirect('/pago/egresos');
-});
-
-router.get('/asignaciones', isAuthenticated, async (req, res) => {
-  const assignments = await Assignment.find({ kenshin: req.user._id })
-    .populate('assignedBy');
-  
-  res.render('kenshin/assignments', { assignments });
-});
 
 module.exports = router;

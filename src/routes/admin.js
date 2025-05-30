@@ -32,7 +32,7 @@ router.get('/FVK/dashboard', isAuthenticated, isAdminRole, async (req, res) => {
     const pendingDojos = await Dojo.find({ activo: false });
     const activeDojos = await Dojo.find({ activo: true, solvente: true });
     
-    res.render('admin/init', {
+    res.render('dashboard', {
       layout: 'admin',
       pendingDojos,
       activeDojos,
@@ -68,7 +68,7 @@ router.get('/FVK/DojoRegister',
   isAuthenticated,
   checkAdminType(['secretario', 'presidente']),
   (req, res) => {
-    res.render('admin/dojo-register', { 
+    res.render('admin/register', { 
       layout: 'admin',
       userRole: req.user.role
     });
@@ -80,10 +80,40 @@ router.get('/FVK/AdminRegister',
   isAuthenticated,
   checkAdminType(['presidente']), // Solo presidente puede crear admins
   (req, res) => {
-    res.render('admin/admin-register', { 
+    res.render('admin/register', { 
       layout: 'admin',
       userRole: req.user.role
     });
+  }
+);
+
+router.get('/FVK/dojos', 
+  isAuthenticated,
+  checkAdminType(['secretario', 'presidente']),
+  async (req, res) => {
+    try {
+      const dojos = await Dojo.find().populate('adminUser');
+      
+      // Calcular solvencia para cada dojo
+      const dojosWithSolvency = [];
+      for (const dojo of dojos) {
+        const isSolvent = await dojo.isSolvent(); // Usar el método del modelo
+        dojosWithSolvency.push({
+          ...dojo.toObject(),
+          isSolvent
+        });
+      }
+
+      res.render('admin/dojolist', {
+        layout: 'admin',
+        dojos: dojosWithSolvency,
+        formatDate: (date) => moment(date).format('DD/MM/YYYY')
+      });
+    } catch (error) {
+      console.error(error);
+      req.flash('error_msg', 'Error al cargar la lista de dojos');
+      res.redirect('/admin/dashboard');
+    }
   }
 );
 
@@ -148,7 +178,7 @@ router.post('/FVK/DojoRegister',
     } catch (error) {
       console.error(error);
       req.flash('error_msg', 'Error en el servidor');
-      res.redirect('/FVK/DojoRegister');
+      res.redirect('/FVK/dojos');
     }
   }
 );
@@ -163,19 +193,17 @@ router.get('/FVK/Finanzas',
   }
 );
 
-// Aprobar Dojo (solo secretario y presidente)
-router.put('/FVK/aprobar-dojo/:id',
+//borrar dojos
+router.delete('/FVK/dojos/:id', 
   isAuthenticated,
   checkAdminType(['secretario', 'presidente']),
   async (req, res) => {
     try {
-      await Dojo.findByIdAndUpdate(req.params.id, { activo: true });
-      req.flash('success_msg', 'Dojo aprobado exitosamente');
-      res.redirect('/FVK/dashboard');
+      await Dojo.findByIdAndDelete(req.params.id);
+      res.sendStatus(200);
     } catch (error) {
       console.error(error);
-      req.flash('error_msg', 'Error al aprobar dojo');
-      res.redirect('/FVK/dashboard');
+      res.sendStatus(500);
     }
   }
 );

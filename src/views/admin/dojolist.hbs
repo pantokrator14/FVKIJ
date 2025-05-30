@@ -1,118 +1,106 @@
-<div class="row">
-    <div class="col-sm-12 col-md-3 bg-dark">
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-3 bg-dark">
+      {{> admin/sidebar}}
+    </div>
+
+    <div class="col-md-9">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <div class="d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">
+              <i class="fas fa-school"></i> Gestión de Dojos
+            </h2>
+            <a href="/FVK/DojoRegister" class="btn btn-success">
+              <i class="fas fa-plus-circle"></i> Nuevo Dojo
+            </a>
+          </div>
+        </div>
         
         <div class="card-body">
-            {{> admin/sidebar}}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="thead-light">
+                <tr>
+                  <th>Nombre</th>
+                  <th>RIF</th>
+                  <th>Contacto</th>
+                  <th>Fundación</th>
+                  <th>Artes</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each dojos}}
+                  <tr>
+                    <td>
+                      <strong>{{name}}</strong><br>
+                      <small class="text-muted">{{address}}</small>
+                    </td>
+                    <td>{{rif}}</td>
+                    <td>
+                      {{contactPerson.name}}<br>
+                      <small>{{contactEmail}}</small>
+                    </td>
+                    <td>{{formatDate foundationDate "DD/MM/YYYY"}}</td>
+                    <td>
+                      {{#each arts}}
+                        <span class="badge badge-info">{{this}}</span>
+                      {{/each}}
+                    </td>
+                    <td>
+                      {{#if isSolvent}}
+                        <span class="badge badge-success">Solvente</span>
+                      {{else}}
+                        <span class="badge badge-warning">Insolvente</span>
+                      {{/if}}
+                    </td>
+                    <td>
+                      <div class="btn-group">
+                        <a href="/admin/dojos/{{_id}}/edit" class="btn btn-sm btn-warning">
+                          <i class="fas fa-edit"></i>
+                        </a>
+                        <button class="btn btn-sm btn-danger delete-dojo" data-id="{{_id}}">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                {{else}}
+                  <tr>
+                    <td colspan="7" class="text-center">
+                      <div class="alert alert-info">
+                        No hay dojos registrados
+                      </div>
+                    </td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
     </div>
-
-    <!--Aquí va el contenido-->
-
-    <div class="col-sm-12 col-md-9 content">
-        <div class="card-head">
-            <br>
-            <h1><i class="fa fa-address-card"></i>  Dojos</h1>
-        </div>
-        <div class="card-body">
-            <hr>
-            <h3>Listado de dojos activos</h3>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead class="thead-light">
-                        <tr>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">RIF</th>
-                        <th scope="col">Dirección</th>
-                        <th scope="col">Fundación</th>
-                        <th scope="col">Correo electrónico</th>
-                        <th scope="col">Responsable</th>
-                        <th scope="col">Artes Marciales</th>
-                        <th scope="col">    </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#each activeDojos}}
-                            <tr>
-                                <th scope="row"> {{DojoName}} </th>
-                                <td> {{DojoRIF}} </td>
-                                <td> {{DojoAddress}} </td>
-                                <td> {{DojoFoundation}} </td>
-                                <td> {{DojoEmail}} </td>
-                                <td> {{FounderName}} </td>
-                                <td> {{artes}} </td>
-                                <td class="d-flex justify-content-between align-items-center"> <!--En caso de no funcionar esto, cambiar. Lo mismo para abajo.-->
-                                    <form action="/dojo/insolvencia/{{_id}}?_method=PUT" method="POST">
-                                        <input type="hidden" name="_method" value="PUT">
-                                        <button type="submit" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></button>
-                                    </form>
-                                    <form action="/dojo/delete/{{_id}}?_method=DELETE" method="POST">
-                                        <input type="hidden" name="_method" value="DELETE">
-                                        <button type="submit" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button> 
-                                    </form>
-                                </td>
-                            </tr>
-                        {{else}}
-                            <tr>
-                                <th scope="row" colspan="7" >
-                                No hay dojos registrados aún.
-                                </th>
-                            </tr>
-                        {{/each}}
-                    </tbody>
-                </table>
-            </div>
-            <br>
-            <hr>
-            <br>
-
-
-            <!--Pasar a otro lado-->
-            <h3>Listado de dojos insolventes</h3>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead class="thead-light">
-                        <tr>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">RIF</th>
-                            <th scope="col">Dirección</th>
-                            <th scope="col">Fundación</th>
-                            <th scope="col">Correo electrónico</th>
-                            <th scope="col">Responsable</th>
-                            <th scope="col">Artes Marciales</th>
-                            <th scope="col">    </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#each inactiveDojos}}
-                            <tr>
-                                <th scope="row"> {{DojoName}} </th>
-                                <td> {{DojoRIF}} </td>
-                                <td> {{DojoAddress}} </td>
-                                <td> {{DojoFoundation}} </td>
-                                <td> {{DojoEmail}} </td>
-                                <td> {{FounderName}} </td>
-                                <td> {{artes}} </td>
-                                <td class="d-flex justify-content-between align-items-center">
-                                    <form action="/dojo/solvencia/{{_id}}?_method=PUT" method="POST">
-                                        <input type="hidden" name="_method" value="PUT">
-                                        <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-edit"></i></button>
-                                    </form>
-                                    <form action="/dojo/delete/{{_id}}?_method=DELETE" method="POST">
-                                        <input type="hidden" name="_method" value="DELETE">
-                                        <button type="submit" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button> 
-                                    </form>
-                                </td>
-                            </tr>
-                        {{else}}
-                            <tr>
-                                <th scope="row" colspan="7" >
-                                No hay dojos insolventes.
-                                </th>
-                            </tr>
-                        {{/each}}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+  </div>
 </div>
+
+<!-- Script para gestión de dojos -->
+<script>
+$(document).ready(() => {
+  // Eliminar dojo
+  $('.delete-dojo').click(function() {
+    const dojoId = $(this).data('id');
+    if (confirm('¿Estás seguro de eliminar este dojo? Esta acción no se puede deshacer.')) {
+      fetch(`/admin/dojos/${dojoId}`, { method: 'DELETE' })
+        .then(response => {
+          if (response.ok) {
+            window.location.reload();
+          } else {
+            alert('Error al eliminar el dojo');
+          }
+        });
+    }
+  });
+});
+</script>

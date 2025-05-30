@@ -6,96 +6,90 @@
         </div>
     </div>
 
-    <div class="col-sm-12 col-md-9 content">
+    <div class="container mt-4">
+        <h1 class="mb-4">
+            <i class="fas fa-cog"></i> Configuración del Dojo
+        </h1>
+
+        <div class="card">
             <div class="card-body">
-                <hr>
-                    <h1><i class="fas fa-cog"></i>  Configuracion</h1>
-                <hr>
-                <form action="/edit/{{data._id}}_method=PUT" method="POST">
-                    <input type="hidden" name="_method" value="PUT">
-                    <div class="row">
-                        <div class="form-group col-sm-12 col-md-4">
-                            <label for="">Nombre del Dojo</label>
-                            <input type="text" name="DojoName" class="form-control" placeholder="Dojo Name" autofocus value="{{data.DojoName}}"> <!--En caso de no funcionar cambiar data por dojo en cada uno de los values-->
-                        </div>
-                        <div class="form-group col-sm-12 col-md-4">
-                            <label for="">Correo Institucional</label>
-                            <input type="email" name="DojoEmail" class="form-control" placeholder="ejemplo@dojo.com" value="{{data.DojoEmail}}"> 
-                        </div>
-                        <div class="form-group col-sm-12 col-md-4">
-                            <label for="">RIF</label>
-                            <input type="text" name="DojoRIF" class="form-control" placeholder="J000000000" value="{{data.DojoRIF}}">
-                        </div>
+            <form action="/dojo/update" method="POST">
+                <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                    <label>Nombre del Dojo *</label>
+                    <input type="text" name="name" class="form-control" value="{{dojo.name}}" required>
                     </div>
-                    <div class="row">
-                        <div class="form-group col-sm-12 col-md-6">
-                            <label for="">Fecha de Fundación</label>
-                            <input type="date" name="DojoFoundation" class="form-control" value="{{data.DojoFoundation}}">
-                        </div>
-                        <div class="form-group col-sm-12 col-md-6">
-                            <label for="">Dirección</label>
-                            <input type="text" name="DojoAddress" class="form-control" placeholder="Edificio, calle, ciudad, estado" value="{{data.DojoAddress}}">
-                        </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                    <label>RIF *</label>
+                    <input type="text" name="rif" class="form-control" value="{{dojo.rif}}" required>
                     </div>
+                </div>
+                </div>
 
-                    <!--Alinear aqui-->
-
-                    <div class="row">
-                        <div class="form-group col-sm-12">
-                            <label for="">Artes marciales que imparte</label>
-                            <br>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" name='artes' type="checkbox" id="inlineCheckbox1" value="kendo">
-                                <label class="form-check-label" for="inlineCheckbox1">Kendo</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" name='artes' type="checkbox" id="inlineCheckbox2" value="iaido">
-                                <label class="form-check-label" for="inlineCheckbox1">Iaido</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" name='artes' type="checkbox" id="inlineCheckbox3" value="jodo">
-                                <label class="form-check-label" for="inlineCheckbox1">Jodo</label>
-                            </div>
-                        </div>
+                <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                    <label>Email de Contacto *</label>
+                    <input type="email" name="contactEmail" class="form-control" value="{{dojo.contactEmail}}" required>
                     </div>
-
-
-                    <h3>Sobre el responsable</h3>
-                    <div class="row">
-                        <div class="form-group col-sm-12 col-md-6">
-                            <label for="">Nombre Completo</label>
-                            <input type="text" name="FounderName" class="form-control" placeholder="Nombre" value="{{dojo.FounderName}}">
-                        </div>
-                        <div class="form-group col-sm-12 col-md-6">
-                            <label for="">Correo electrónico</label>
-                            <input type="email" name="FounderEmail" class="form-control" placeholder="nombre@ejemplo.com" value="{{dojo.FounderEmail}}">
-                        </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="text" name="phone" class="form-control" value="{{dojo.phone}}">
                     </div>
+                </div>
+                </div>
 
-                    <div class="row">
-                        <div class="form-group col-sm-12 col-md-6">
-                            <label for="">Cédula de Identidad</label>
-                            <input type="" name="FounderID" class="form-control" placeholder="00000000" value="{{dojo.FounderID}}">
-                        </div>
-                        <div class="form-group col-sm-12 col-md-6">
-                            <label for="grado">Grado</label>
-                            <select name="grados" id="" class="form-control">
-                                <option value="1er dan">一段・1er dan</option>
-                                <option value="2do dan">二段・2do dan</option>
-                                <option value="3er dan">三段・3er dan</option>
-                                <option value="4to dan">四段・4to dan</option>
-                                <option value="5to dan">五段・5to dan</option>
-                                <option value="6to dan">六段・6to dan</option>
-                                <option value="7mo dan">七段・7mo dan</option>
-                                <option value="8vo dan">八段・8vo dan</option>
-                            </select>
-                        </div>
+                <div class="form-group">
+                <label>Dirección</label>
+                <input type="text" name="address" class="form-control" value="{{dojo.address}}">
+                </div>
+
+                <div class="form-group">
+                <label>Artes Marciales *</label>
+                <div class="row">
+                    <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="arts" value="kendo" 
+                        {{#if (includes dojo.arts 'kendo')}}checked{{/if}}>
+                        <label class="form-check-label">Kendo</label>
                     </div>
+                    </div>
+                    <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="arts" value="iaido" 
+                        {{#if (includes dojo.arts 'iaido')}}checked{{/if}}>
+                        <label class="form-check-label">Iaido</label>
+                    </div>
+                    </div>
+                    <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="arts" value="jodo" 
+                        {{#if (includes dojo.arts 'jodo')}}checked{{/if}}>
+                        <label class="form-check-label">Jodo</label>
+                    </div>
+                    </div>
+                </div>
+                </div>
 
-                    <br>
-                    <button type="submit" class="btn btn-primary"><i class="fas fa-edit"></i> Actualizar informacion</button>
-                </form>
+                <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                    <label>Fecha de Fundación *</label>
+                    <input type="date" name="foundationDate" class="form-control" 
+                        value="{{formatDate dojo.foundationDate 'YYYY-MM-DD'}}" required>
+                    </div>
+                </div>
+                </div>
 
+                <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Guardar Cambios
+                </button>
+            </form>
             </div>
+        </div>
     </div>
-</div>

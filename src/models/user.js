@@ -43,17 +43,25 @@ userSchema.methods.matchPassword = async function(password) {
 };
 
 // Verificación de solvencia (corregida)
-userSchema.methods.solvente = async function() {
+userSchema.methods.isSolvent = async function() {
+  try {
     const today = new Date();
     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     
-    const payment = await this.model('Payment').findOne({
-        user: this._id,
-        verified: true,
-        createdAt: { $gte: firstDayOfMonth, $lte: today }
+    const payment = await Payment.findOne({
+      status: 'confirmado',
+      type: 'ingreso',
+      toModel: 'Dojo',
+      to: this.dojo._id,
+      from: this._id,
+      date: { $gte: firstDayOfMonth, $lte: today }
     });
     
     return !!payment;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
 };
 
 module.exports = mongoose.model('User', userSchema);

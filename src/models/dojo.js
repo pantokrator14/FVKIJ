@@ -4,52 +4,43 @@ const { Schema } = mongoose; //Y de ella tomamos el modelo de esquemas
 const Payment = require('./payment');
 
 //Definimos el modelo...
-const dojoSchema = new Schema({
-    name : { type : String, required : true},
-    rif : { type : String, required : true}, //Registro I Fiscal 
-    foundationDate : { type : Date, required : true},
-    active : { type : Boolean, default : false}, //activo para acceder al sistema
-    founder: {
-        _id: { type: mongoose.ObjectId },
-        name: { type: String },
-    },
-    arts : [{ type : String, required : true}]
-});
+const dojoSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  rif: { type: String, required: true, unique: true },
+  foundationDate: { type: Date, required: true },
+  active: { type: Boolean, default: false },
+  arts: [{ type: String, required: true }],
+  contactEmail: { type: String, required: true },
+  address: String,
+  phone: String,
+  // Referencia al usuario administrador del dojo
+  adminUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+}, { timestamps: true });
 
-dojoSchema.methods.canEdit = function (user) {
-    return Boolean(user.dojo.canEdit);
-}
+// Verificar si el dojo está solvente
+dojoSchema.methods.isSolvent = async function() {
+  const today = new Date();
+  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  
+  const payment = await Payment.findOne({
+    status: 'confirmado',
+    $or: [
+      { 
+        toModel: 'Dojo',
+        to: this._id,
+        type: 'ingreso'
+      },
+      {
+        fromModel: 'Dojo',
+        from: this._id,
+        type: 'egreso',
+        'externalEntity': 'FVK' // Solo pagos a la federación
+      }
+    ],
+    date: { $gte: firstDayOfMonth, $lte: today }
+  });
 
-dojoSchema.methods.solvente = async function () {
-    let today = new Date();
-    today.setTime(0, 0, 0, 0);
-    const startDate = new Date(today);
-    startDate.setDate(1);
-    if(today.getMonth === 0) { // si estamos en enero
-        // el año pasado
-        startDate.setFullYear(today.getFullYear() -1);
-        // mes de diciembre
-        startDate.setMonth(11);
-    } else {
-        startDate.setMonth(today.getMonth - 1);
-    }
+  return !!payment;
+};
 
-    const payment = await Payment.findOne({
-        verified: true,
-        assignedTo: {
-            type: 'dojo',
-            value: {
-                _id: this._id
-            }
-        },
-        solvingDate: {
-            $gte: startDate,
-            $lte: today 
-        }
-    })
-
-    return !!payment;
-}
-
-//Finalmente exportamos este modelo
 module.exports = mongoose.model('Dojo', dojoSchema);

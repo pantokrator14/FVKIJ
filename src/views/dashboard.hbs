@@ -1,0 +1,80 @@
+
+<div class="row">
+    <div class="col-md-3">
+        {{#if isAdmin}}
+        {{> admin/sidebar}}
+        {{else if isDojo}}
+        {{> dojo/sidebar}}
+        {{else if isStudent}}
+        {{> student/sidebar}}
+        {{/if}}
+    </div>
+
+    <div class="col-md-9">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">
+                {{#if isAdmin}}<i class="fas fa-user-shield"></i> Panel de Autoridades{{/if}}
+                {{#if isDojo}}<i class="fas fa-building"></i> Panel de Dojo{{/if}}
+                {{#if isStudent}}<i class="fas fa-user"></i> Panel de Kenshin{{/if}}
+                </h2>
+            </div>
+        
+            <div class="card-body">
+                <h3 class="text-center mb-4">
+                ¡Bienvenido{{#if currentUser.name}}, {{currentUser.name}}{{/if}}!
+                </h3>
+                
+                <div class="alert alert-info">
+                {{#if isAdmin}}
+                    <p>Este es el sistema administrativo para las autoridades de la Federación Venezolana de Kendo, Iaido y Jodo. Aquí podrá:</p>
+                    <ul>
+                        <li>Registrar nuevos dojos</li>
+                        <li>Revisar y gestionar las finanzas de la federación</li>
+                        <li>Registrar y asignar equipos a kenshins</li>
+                    </ul>
+                {{/if}}
+                
+                {{#if isDojo}}
+                    <p>Este es el sistema administrativo para dojos de la Federación Venezolana de Kendo, Iaido y Jodo. Aquí podrá:</p>
+                    <ul>
+                        <li>Gestionar los miembros de su dojo</li>
+                        <li>Registrar y confirmar pagos de sus kenshins</li>
+                        <li>Reportar pagos a la federación</li>
+                        <li>Actualizar la información de su dojo</li>
+                    </ul>
+                {{/if}}
+                
+                {{#if isStudent}}
+                    <p>Bienvenido al sistema para kenshins de la Federación Venezolana de Kendo, Iaido y Jodo. Aquí podrá:</p>
+                    <ul>
+                    <li>Actualizar su información personal</li>
+                    <li>Ver los equipos asignados por su dojo</li>
+                    <li>Registrar sus pagos mensuales</li>
+                    <li>Descargar certificaciones y grados</li>
+                    </ul>
+                {{/if}}
+                </div>
+                
+                {{#if showSolvencyWarning}}
+                <div class="alert alert-warning">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Atención</h4>
+                    <p>
+                    {{#if isDojo}}
+                        Tu dojo se encuentra insolvente con la federación.
+                    {{else if isStudent}}
+                        Te encuentras insolvente con tu dojo.
+                    {{/if}}
+                    Por favor dirígete a la sección de 
+                    <a href="{{#if isDojo}}/pago/egresos{{else}}/pago/ingresos{{/if}}" class="alert-link">
+                        finanzas
+                    </a> 
+                    para registrar tu pago.
+                    </p>
+                </div>
+                {{/if}}
+                
+            </div>
+        </div>
+    </div>
+</div>
