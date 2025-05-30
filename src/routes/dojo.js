@@ -40,7 +40,7 @@ router.get('/dojo/members', isAuthenticated, isDojoRole, async (req, res) => {
       'dojo._id': req.user.dojoInfo._id 
     }).sort({ createdAt: -1 });
     
-    res.render('dojo/members', {
+    res.render('dojo/dojo-members', {
       layout: 'dojo',
       members,
       dojoId: req.user.dojoInfo._id
@@ -87,6 +87,15 @@ router.post('/dojo/members', isAuthenticated, isDojoRole, async (req, res) => {
     res.redirect('/dojo/members');
   }
 });
+
+router.get('/dojo/Finanzas',
+  isAuthenticated,
+  isDojo,
+  (req, res) => {
+    // Redirigir a la vista universal de pagos
+    res.redirect('/pago/ingresos');
+  }
+);
 
 // Actualizar información del dojo
 router.put('/dojo/update', isAuthenticated, isDojoRole, async (req, res) => {

@@ -1,0 +1,56 @@
+<div class="row">
+    <div class="col-sm-12 col-md-3 bg-dark">
+        
+        <div class="card-body">
+            {{> student/sidebar}}
+        </div>
+    </div>
+
+    <!--Aquí va el contenido-->
+
+    <div class="col-sm-12 col-md-9 content">
+        <h1 class="mb-4">
+            <i class="fas fa-archive"></i> Mis Equipos Asignados
+        </h1>
+
+        <div class="row">
+            {{#each equipments}}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                    {{#eq type 'shinai'}}<i class="fas fa-sword"></i> Shinai{{/eq}}
+                    {{#eq type 'bogu'}}<i class="fas fa-shield-alt"></i> Bogu{{/eq}}
+                    {{#eq type 'iaito'}}<i class="fas fa-sword"></i> Iaito{{/eq}}
+                    {{#eq type 'uniforme'}}<i class="fas fa-tshirt"></i> Uniforme{{/eq}}
+                    {{#eq type 'otros'}}<i class="fas fa-box"></i> Equipo{{/eq}}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{description}}</p>
+                    <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <strong>N° Serie:</strong> {{serialNumber}}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Asignado el:</strong> {{formatDate dateAssigned "DD/MM/YYYY"}}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Estado:</strong> 
+                        <span class="badge badge-primary">Asignado</span>
+                    </li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            {{else}}
+            <div class="col-12">
+                <div class="alert alert-info">
+                No tienes equipos asignados actualmente.
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        </div>
+    </div>
+</div>
