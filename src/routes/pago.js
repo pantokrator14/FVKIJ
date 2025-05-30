@@ -41,7 +41,7 @@ router.get('/pago/:type(ingresos|egresos)', isAuthenticated, async (req, res) =>
 
 // Crear nuevo pago
 router.post('/pago/RealizarPago', isAuthenticated, async (req, res) => {
-  const { type, amount, description } = req.body;
+  const { type, amount, description, to, externalEntity } = req.body;
   
   try {
     const newPayment = new Payment({
@@ -53,29 +53,55 @@ router.post('/pago/RealizarPago', isAuthenticated, async (req, res) => {
     });
 
     // Asignar participantes según el rol
-    if (req.user.role === 'admin') {
-      if (type === 'ingreso') {
-        newPayment.toModel = 'FVK';
-        newPayment.from = to; // ID del dojo/usuario
-        newPayment.fromModel = to.startsWith('dojo_') ? 'Dojo' : 'User';
-      } else {
-        newPayment.fromModel = 'FVK';
-        newPayment.to = to; // ID del dojo/usuario
-        newPayment.toModel = to.startsWith('dojo_') ? 'Dojo' : 'User';
-      }
-    } else if (req.user.role === 'dojo') {
-      if (type === 'ingreso') {
-        newPayment.toModel = 'Dojo';
-        newPayment.to = req.user._id;
-        newPayment.from = to; // ID del kenshin
-        newPayment.fromModel = 'User';
-      } else {
-        newPayment.fromModel = 'Dojo';
-        newPayment.from = req.user._id;
-        newPayment.toModel = 'FVK'; // Egresos siempre a la federación
-      }
-    } else if (req.user.role === 'kenshin') {
-      newPayment.type = 'egreso';
+    switch(req.user.role) {
+      case 'admin':
+        if (type === 'ingreso') {
+          // Ingresos a la federación (solo de dojos)
+          newPayment.toModel = 'FVK';
+          newPayment.from = to; // ID del dojo
+          newPayment.fromModel = 'Dojo';
+        } else {
+          // Egresos de la federación (a entidades externas)
+          newPayment.fromModel = 'FVK';
+          
+          // Si es una entidad externa
+          if (externalEntity) {
+            newPayment.toModel = 'External';
+            newPayment.to = null;
+            newPayment.externalEntity = externalEntity;
+          } else {
+            newPayment.toModel = to.startsWith('dojo_') ? 'Dojo' : 'User';
+            newPayment.to = to;
+          }
+        }
+      break;
+        
+      case 'dojo':
+        if (type === 'ingreso') {
+          // Ingresos al dojo (solo de kenshins)
+          newPayment.toModel = 'Dojo';
+          newPayment.to = req.user._id;
+          newPayment.fromModel = 'User';
+          newPayment.from = to; // ID del kenshin
+        } else {
+          // Egresos del dojo (a federación u otros)
+          newPayment.fromModel = 'Dojo';
+          newPayment.from = req.user._id;
+          
+          // Si es a la federación
+          if (to === 'FVK') {
+            newPayment.toModel = 'FVK';
+          } else {
+            // Entidades externas
+            newPayment.toModel = 'External';
+            newPayment.to = null;
+            newPayment.externalEntity = externalEntity;
+          }
+        }
+      break;
+
+      case 'kenshin':
+        newPayment.type = 'egreso';
         newPayment.fromModel = 'User';
         newPayment.from = req.user._id;
         newPayment.toModel = 'Dojo';
@@ -85,6 +111,7 @@ router.post('/pago/RealizarPago', isAuthenticated, async (req, res) => {
           throw new Error('No tienes un dojo asignado');
         }
         newPayment.to = req.user.dojo._id;
+      break;
     }
 
     await newPayment.save();

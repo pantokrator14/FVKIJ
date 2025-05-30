@@ -31,6 +31,10 @@ router.put('/update/:id', isAuthenticated, async (req, res) => {
     }
 });
 
+router.get('/pagos', isAuthenticated, (req, res) => {
+  res.redirect('/pago/egresos');
+});
+
 router.get('/asignaciones', isAuthenticated, async (req, res) => {
   const assignments = await Assignment.find({ kenshin: req.user._id })
     .populate('assignedBy');

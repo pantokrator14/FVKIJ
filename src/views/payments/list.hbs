@@ -107,19 +107,160 @@
   </div>
 </div>
 
-<!-- Modal de Transacción -->
-<div class="modal fade" id="transactionModal" tabindex="-1" role="dialog" aria-labelledby="transactionModalLabel" aria-hidden="true">
+<!-- Modales de Transacción -->
+
+{{#if isAdmin}}
+<div class="modal fade" id="transactionModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-header">
+    <h5 class="modal-title" id="transactionModalLabel">Nueva Transacción</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <form action="/pago/RealizarPago" method="POST">
+    <div class="modal-body">
+      <input type="hidden" name="type" value="{{#eq type 'ingresos'}}ingreso{{else}}egreso{{/eq}}">
+      
+      <div class="form-group">
+        <label for="amount">Monto</label>
+        <input type="number" class="form-control" name="amount" step="0.01" min="0.01" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="description">Descripción</label>
+        <textarea class="form-control" name="description" rows="2" required></textarea>
+      </div>
+      
+      {{#eq type 'ingresos'}}
+        <div class="form-group">
+          <label for="to">Dojo Origen</label>
+          <select class="form-control" name="to" required>
+            <option value="">Seleccionar dojo...</option>
+            {{#each dojos}}
+              <option value="{{_id}}">{{name}}</option>
+            {{/each}}
+          </select>
+        </div>
+      {{else}}
+        <div class="form-group">
+          <label>Destino del Egreso</label>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="destinationType" 
+                   id="toFederation" value="FVK" checked>
+            <label class="form-check-label" for="toFederation">
+              Federación (FVK)
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="destinationType" 
+                   id="toExternal" value="external">
+            <label class="form-check-label" for="toExternal">
+              Entidad Externa
+            </label>
+          </div>
+        </div>
+        
+        <div class="form-group" id="externalEntityGroup" style="display: none;">
+          <label for="externalEntity">Nombre de la Entidad</label>
+          <input type="text" class="form-control" name="externalEntity" 
+                 placeholder="Ej: FIK, CLAK, Proveedor...">
+        </div>
+      {{/eq}}
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+      <button type="submit" class="btn btn-primary">Registrar Pago</button>
+    </div>
+  </form>
+</div>
+{{/if}}
+
+<!-- Modal para Dojo -->
+{{#if isDojo}}
+<div class="modal fade" id="transactionModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-header">
+    <h5 class="modal-title" id="transactionModalLabel">Nueva Transacción</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <form action="/pago/RealizarPago" method="POST">
+    <div class="modal-body">
+      <input type="hidden" name="type" value="{{#eq type 'ingresos'}}ingreso{{else}}egreso{{/eq}}">
+      
+      <div class="form-group">
+        <label for="amount">Monto</label>
+        <input type="number" class="form-control" name="amount" step="0.01" min="0.01" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="description">Descripción</label>
+        <textarea class="form-control" name="description" rows="2" required></textarea>
+      </div>
+      
+      {{#eq type 'ingresos'}}
+        <div class="form-group">
+          <label for="to">Kenshin</label>
+          <select class="form-control" name="to" required>
+            <option value="">Seleccionar kenshin...</option>
+            {{#each kenshins}}
+              <option value="{{_id}}">{{name}}</option>
+            {{/each}}
+          </select>
+        </div>
+      {{else}}
+        <div class="form-group">
+          <label>Destino del Egreso</label>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="destinationType" 
+                   id="toFederation" value="FVK" checked>
+            <label class="form-check-label" for="toFederation">
+              Federación (FVK)
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="destinationType" 
+                   id="toExternal" value="external">
+            <label class="form-check-label" for="toExternal">
+              Otros gastos
+            </label>
+          </div>
+        </div>
+        
+        <div class="form-group" id="externalEntityGroup" style="display: none;">
+          <label for="externalEntity">Descripción del gasto</label>
+          <input type="text" class="form-control" name="externalEntity" 
+                 placeholder="Ej: Alquiler, Materiales, Eventos...">
+        </div>
+      {{/eq}}
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+      <button type="submit" class="btn btn-primary">Registrar Pago</button>
+    </div>
+  </form>
+</div>
+{{/if}}
+
+{{#if isStudent}}
+<div class="modal fade" id="transactionModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="transactionModalLabel">Nueva Transacción</h5>
+        <h5 class="modal-title">Registrar Pago a tu Dojo</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <form action="/pago/RealizarPago" method="POST">
         <div class="modal-body">
-          <input type="hidden" name="type" value="{{#eq type 'ingresos'}}ingreso{{else}}egreso{{/eq}}">
+          <input type="hidden" name="type" value="egreso">
+          
+          <div class="form-group">
+            <label>Dojo Destino</label>
+            <input type="text" class="form-control" value="{{currentUser.dojo.name}}" readonly>
+            <small class="form-text text-muted">Pago destinado a tu dojo actual</small>
+          </div>
           
           <div class="form-group">
             <label for="amount">Monto</label>
@@ -128,32 +269,9 @@
           
           <div class="form-group">
             <label for="description">Descripción</label>
-            <textarea class="form-control" name="description" rows="2"></textarea>
+            <textarea class="form-control" name="description" rows="2" 
+                      placeholder="Ej: Pago de mensualidad abril 2023"></textarea>
           </div>
-          
-          {{#if isAdmin}}
-            <div class="form-group">
-              <label for="to">
-                {{#eq type 'ingresos'}}Origen{{else}}Destino{{/eq}}
-              </label>
-              <select class="form-control" name="to" required>
-                <option value="">Seleccionar...</option>
-                <!-- Opciones para administradores -->
-                <option value="dojo_123">Dojo A</option>
-                <option value="user_456">Kenshin X</option>
-              </select>
-            </div>
-          {{else if isStudent}}
-            <div class="form-group">
-              <label for="to">Dojo Destino</label>
-              <select class="form-control" name="to" required>
-                <option value="">Seleccionar dojo...</option>
-                {{#each dojos}}
-                  <option value="{{_id}}">{{name}}</option>
-                {{/each}}
-              </select>
-            </div>
-          {{/if}}
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -163,3 +281,4 @@
     </div>
   </div>
 </div>
+{{/if}}
