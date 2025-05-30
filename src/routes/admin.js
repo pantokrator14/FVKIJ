@@ -68,7 +68,7 @@ router.get('/FVK/DojoRegister',
   isAuthenticated,
   checkAdminType(['secretario', 'presidente']),
   (req, res) => {
-    res.render('admin/dojo-register', { 
+    res.render('admin/register', { 
       layout: 'admin',
       userRole: req.user.role
     });
@@ -80,7 +80,7 @@ router.get('/FVK/AdminRegister',
   isAuthenticated,
   checkAdminType(['presidente']), // Solo presidente puede crear admins
   (req, res) => {
-    res.render('admin/admin-register', { 
+    res.render('admin/register', { 
       layout: 'admin',
       userRole: req.user.role
     });

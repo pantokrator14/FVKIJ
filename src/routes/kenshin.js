@@ -5,6 +5,24 @@ const User = require('../models/user');
 const Assignment = require('../models/equipment');
 
 // Perfil de estudiante
+router.get('/student/dashboard', isAuthenticated, async (req, res) => {
+  try {
+    const isSolvent = await req.user.isSolvent(); // Implementar en modelo User
+    
+    res.render('dashboard', {
+      layout: 'kenshin',
+      isStudent: true,
+      currentUser: req.user,
+      showSolvencyWarning: !isSolvent
+    });
+  } catch (error) {
+    console.error(error);
+    req.flash('error_msg', 'Error al cargar el panel');
+    res.redirect('/');
+  }
+});
+
+
 router.get('/profile/:id', isAuthenticated, async (req, res) => {
   try {
     const student = await User.findById(req.params.id);

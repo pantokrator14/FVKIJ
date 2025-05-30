@@ -17,17 +17,14 @@ const isDojoRole = (req, res, next) => {
 // Panel del dojo
 router.get('/dojo/dashboard', isAuthenticated, isDojoRole, async (req, res) => {
   try {
-    // Obtener información actualizada del dojo
     const dojo = await Dojo.findById(req.user.dojoInfo._id);
-    
-    // Obtener estado de solvencia
     const isSolvent = await dojo.isSolvent();
     
-    res.render('dojo/dashboard', { 
+    res.render('dashboard', {
       layout: 'dojo',
-      dojo,
-      isSolvent,
-      currentMonth: new Date().toLocaleString('default', { month: 'long' })
+      isDojo: true,
+      currentUser: req.user,
+      showSolvencyWarning: !isSolvent
     });
   } catch (error) {
     console.error(error);
