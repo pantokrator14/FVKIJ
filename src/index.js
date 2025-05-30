@@ -1,3 +1,4 @@
+require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const exphbs = require('express-handlebars');
@@ -5,7 +6,9 @@ const methodOverride = require('method-override');
 const flash = require('connect-flash');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
 const app = express();
+const contextMiddleware = require('./helpers/context');
 
 // Configuración de la base de datos
 const connectDB = require('./config/database');
@@ -22,21 +25,22 @@ app.set('views', path.join(__dirname, 'views'));
 // Middlewares
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride('_method'));
-app.use(cookieParser(process.env.SECRET || 'endogeno'));
+app.use(cookieParser(process.env.SECRET));
 app.use(session({
-    secret: process.env.SECRET || 'endogeno',
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false }
+    cookie: { secure: process.env.NODE_ENV === 'development' }
 }));
 app.use(flash());
+
 
 // Middleware de autenticación JWT
 app.use((req, res, next) => {
     const token = req.signedCookies.authorization;
     if (token) {
         try {
-            const decoded = jwt.verify(token, process.env.SECRET || 'endogeno');
+            const decoded = jwt.verify(token, process.env.SECRET);
             req.user = decoded;
         } catch (error) {
             res.clearCookie('authorization');
@@ -44,6 +48,8 @@ app.use((req, res, next) => {
     }
     next();
 });
+
+app.use(contextMiddleware);
 
 // Variables globales para mensajes
 app.use((req, res, next) => {
@@ -55,11 +61,11 @@ app.use((req, res, next) => {
 
 // Rutas
 app.use('/', require('./routes/init'));
-app.use('/equipos', require('./routes/asignacion'));
+//app.use('/equipos', require('./routes/asignacion'));
 app.use('/pago', require('./routes/pago'));
 app.use('/student', require('./routes/kenshin'));
-app.use('/dojo', require('./routes/dojo'));
-app.use('/FVK', require('./routes/admin'));
+//app.use('/dojo', require('./routes/dojo'));
+//app.use('/FVK', require('./routes/admin'));
 
 // Archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));

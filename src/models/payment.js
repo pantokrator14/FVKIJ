@@ -14,6 +14,7 @@ const PaymentSchema = new mongoose.Schema({
   fromModel: { type: String, enum: ['User', 'Dojo'] },
   to: { type: mongoose.Schema.Types.ObjectId, refPath: 'toModel' },
   toModel: { type: String, enum: ['User', 'Dojo', 'FVK'] },
+  externalEntity: String,
   date: { type: Date, default: Date.now }
 });
 
