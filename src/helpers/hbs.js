@@ -1,7 +1,7 @@
 const Handlebars = require('handlebars');
 
-Handlebars.registerHelper('eq', function(a, b, options) {
-  return a === b ? options.fn(this) : options.inverse(this);
+Handlebars.registerHelper('includes', function(array, value, options) {
+  return array.includes(value) ? options.fn(this) : options.inverse(this);
 });
 
 Handlebars.registerHelper('hasPermission', function(permission, options) {
