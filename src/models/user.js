@@ -5,15 +5,23 @@ const bcrypt = require('bcryptjs');
 
 const userSchema = new Schema({
     name: { type: String, required: true },
-    identification: { type: Number, required: true },
+    identification: { type: String, required: true },
     birthdate: { type: Date, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: {
-        type: String,
-        required: true,
-        enum: ['secretario', 'tesorero', 'presidente', 'dojo', 'kenshin'],
-        default: 'kenshin'
+    type: String,
+    required: true,
+    enum: ['presidente', 'secretario', 'tesorero', 'dojo_admin', 'kenshin'],
+    default: 'kenshin'
+  },
+    adminType: { 
+      type: String, 
+      enum: ['presidente', 'secretario', 'tesorero'] 
+    },
+    permissions: {
+      finanzas: { type: Boolean, default: false },
+      administrativo: { type: Boolean, default: false }
     },
     grade: {
         _id: { type: mongoose.ObjectId },
@@ -25,8 +33,8 @@ const userSchema = new Schema({
     weight: { type: Number, required: true },
     direccion: { type: String, required: true },
     dojo: {
-        _id: { type: mongoose.ObjectId, ref: 'Dojo' },
-        name: { type: String }
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Dojo'
     }
 }, { timestamps: true });
 
@@ -37,31 +45,45 @@ userSchema.pre('save', async function(next) {
     next();
 });
 
+userSchema.pre('save', function(next) {
+  // Permisos para administradores de federación
+  if (['presidente', 'secretario', 'tesorero'].includes(this.role)) {
+    this.adminType = this.role;
+    
+    switch(this.role) {
+      case 'secretario':
+        this.permissions = { administrativo: true };
+        break;
+      case 'tesorero':
+        this.permissions = { finanzas: true };
+        break;
+      case 'presidente':
+        this.permissions = { finanzas: true, administrativo: true };
+        break;
+    }
+}});
+
 // Comparación de contraseñas
 userSchema.methods.matchPassword = async function(password) {
     return await bcrypt.compare(password, this.password);
 };
 
-// Verificación de solvencia (corregida)
+
+
+// Verificación de solvencia
 userSchema.methods.isSolvent = async function() {
-  try {
-    const today = new Date();
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    
-    const payment = await Payment.findOne({
-      status: 'confirmado',
-      type: 'ingreso',
-      toModel: 'Dojo',
-      to: this.dojo._id,
-      from: this._id,
-      date: { $gte: firstDayOfMonth, $lte: today }
-    });
-    
-    return !!payment;
-  } catch (error) {
-    console.error(error);
-    return false;
-  }
+  const payment = await Payment.findOne({
+    status: 'confirmado',
+    type: 'ingreso',
+    to: this.dojo,
+    from: this._id,
+    date: { 
+      $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+      $lte: new Date()
+    }
+  });
+  
+  return !!payment;
 };
 
 module.exports = mongoose.model('User', userSchema);

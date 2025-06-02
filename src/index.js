@@ -13,6 +13,8 @@ const contextMiddleware = require('./helpers/context');
 // Configuración de la base de datos
 const connectDB = require('./config/database');
 
+const createDefaultAdmins = require('./scripts/seed');
+
 // Configuración de Handlebars
 app.engine('.hbs', exphbs.engine({
   defaultLayout: 'main',
@@ -61,11 +63,11 @@ app.use((req, res, next) => {
 
 // Rutas
 app.use('/', require('./routes/init'));
-//app.use('/equipos', require('./routes/asignacion'));
+app.use('/equipos', require('./routes/asignacion'));
 app.use('/pago', require('./routes/pago'));
 app.use('/student', require('./routes/kenshin'));
-//app.use('/dojo', require('./routes/dojo'));
-//app.use('/FVK', require('./routes/admin'));
+app.use('/dojo', require('./routes/dojo'));
+app.use('/FVK', require('./routes/admin'));
 
 // Archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
@@ -74,7 +76,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 const PORT = process.env.PORT || 3000;  // <-- Se define el puerto aquí
 
 // Iniciar servidor después de conectar a MongoDB
-connectDB().then(() => {
+connectDB().then( async () => {
+    await createDefaultAdmins();
     app.listen(PORT, () => {  
         console.log('🚀 Servidor conectado en puerto:', PORT);
         console.log('Ruta de layouts:', path.join(__dirname, 'views/layouts'));

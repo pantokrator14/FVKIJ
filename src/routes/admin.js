@@ -112,7 +112,7 @@ router.get('/FVK/dojos',
     } catch (error) {
       console.error(error);
       req.flash('error_msg', 'Error al cargar la lista de dojos');
-      res.redirect('/admin/dashboard');
+      res.redirect('/FVK/dashboard');
     }
   }
 );

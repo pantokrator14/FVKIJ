@@ -8,13 +8,16 @@ const dojoSchema = new mongoose.Schema({
   name: { type: String, required: true },
   rif: { type: String, required: true, unique: true },
   foundationDate: { type: Date, required: true },
-  active: { type: Boolean, default: false },
   arts: [{ type: String, required: true }],
-  contactEmail: { type: String, required: true },
+  email: { type: String, required: true },
   address: String,
   phone: String,
   // Referencia al usuario administrador del dojo
-  adminUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  adminUser: { 
+  type: mongoose.Schema.Types.ObjectId, 
+  ref: 'User',
+  required: true 
+  }
 }, { timestamps: true });
 
 // Verificar si el dojo está solvente

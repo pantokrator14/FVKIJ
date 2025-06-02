@@ -88,19 +88,11 @@ router.post('/dojo/members', isAuthenticated, isDojoRole, async (req, res) => {
   }
 });
 
-router.get('/dojo/Finanzas',
-  isAuthenticated,
-  isDojo,
-  (req, res) => {
-    // Redirigir a la vista universal de pagos
-    res.redirect('/pago/ingresos');
-  }
-);
 
 // Actualizar información del dojo
 router.put('/dojo/update', isAuthenticated, isDojoRole, async (req, res) => {
   try {
-    const { name, rif, arts, contactEmail, address, phone } = req.body;
+    const { name, rif, arts, email, address, phone } = req.body;
     
     const updatedDojo = await Dojo.findByIdAndUpdate(
       req.user.dojoInfo._id,
@@ -108,8 +100,9 @@ router.put('/dojo/update', isAuthenticated, isDojoRole, async (req, res) => {
         name,
         rif,
         arts: arts.split(','),
-        contactEmail,
+        email,
         address,
+        password,
         phone
       },
       { new: true }
