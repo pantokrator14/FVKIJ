@@ -1,0 +1,593 @@
+/* ============================================================
+   ESTILOS ORIGINALES DEL PROYECTO FVK — preservados exactamente
+   ============================================================ */
+
+body {
+    background: #333333;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #dd1818, #333333);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to left, #dd1818, #333333); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+p, h1, h2, h3, h4, h5, h6, label, a, small {
+    font-family: 'Tw cen MT Condensed', 'Tw cen MT Condensed Bold';
+}
+h1{
+    font-size: 75px;
+}
+h2{
+    font-size: 70px;
+    padding-top: 12px;
+}
+h3{
+    font-size: 60px;
+}
+p{
+    font-size: 40px;
+}
+label{
+    font-size: 30px;
+}
+
+img{
+    size: 50px;
+}
+.cap{
+    height: 375px;
+}
+a, a:hover, a:active{
+    color: #dd1818;
+    text-decoration: none;
+    font-size: 30px
+}
+.modal-title {
+    color: black;
+    font-size: 40px;
+}
+button > a, a:hover, a:active{
+    color: white;
+}
+
+.btn-danger, .btn-danger:hover, .btn-danger:active, .btn-primary, .btn-primary:hover, .btn-primary:active{
+    background-color: #dd1818;
+    font-family: 'Tw cen MT Condensed', 'Tw cen MT Condensed Bold';
+    font-size: 20px;
+    border-color: #dd1818;
+}
+.content {
+    background-color: gainsboro;
+    padding: 0;
+    border: 0px;
+    text-align: center;
+    -webkit-box-shadow: 6px 7px 14px -5px rgba(0,0,0,0.75);
+    -moz-box-shadow: 6px 7px 14px -5px rgba(0,0,0,0.75);
+    box-shadow: 6px 7px 14px -5px rgba(0,0,0,0.75);
+}
+
+.panel1{
+    background-image: url('/img/2.png');
+    background-size: cover;
+}
+
+.panel2{
+    background-image: url('/img/1.png');
+    background-size: cover;
+}
+
+.panel3{
+    background-image: url('/img/3.png');
+    background-size: cover;
+}
+
+.title{
+    color:white;
+}
+.logo{
+    background-color: #dd1818;
+    text-align: center;
+    border-radius: 5px 0px 0px 5px;
+    padding: 10px;
+    z-index: 1000;
+    color: white;
+}
+li{
+    list-style: none;
+}
+
+/* ============================================================
+   LOGIN — NUEVO DISEÑO CENTRADO
+   ============================================================ */
+
+/* Contenedor full-viewport que centra la tarjeta */
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Tarjeta principal del login */
+.login-card {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    max-width: 900px;
+    min-height: 520px;
+    border-radius: 28px;
+    overflow: hidden;
+    background-color: gainsboro;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+/* Lado izquierdo — Marca FVK (ocupa toda su mitad) */
+.login-brand {
+    flex: 1 1 50%;
+    background-color: #dd1818;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.login-brand-title {
+    font-size: 48px;
+    margin-top: 10px;
+    margin-bottom: 0;
+    line-height: 1.1;
+}
+
+.login-brand-subtitle {
+    font-size: 32px;
+    margin-top: 5px;
+    font-weight: 300;
+    opacity: 0.9;
+}
+
+/* Lado derecho — Formulario (ocupa toda su mitad) */
+.login-form {
+    flex: 1 1 50%;
+    padding: 40px 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-form-heading {
+    font-size: 48px;
+    margin-bottom: 15px;
+    color: #333;
+    text-align: center;
+    font-weight: 700;
+}
+
+/* Botón de login con hover sutil */
+.btn-login {
+    background-color: #dd1818;
+    border: 2px solid #dd1818;
+    color: white;
+    font-family: 'Tw cen MT Condensed', 'Tw cen MT Condensed Bold';
+    font-size: 22px;
+    padding: 10px 40px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    letter-spacing: 1px;
+}
+
+.btn-login:hover:not(:disabled) {
+    background-color: transparent;
+    color: #dd1818;
+    box-shadow: 0 0 0 2px #dd1818 inset;
+    transform: translateY(-2px);
+}
+
+.btn-login:active:not(:disabled) {
+    transform: translateY(0px);
+}
+
+.btn-login:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Ajustes responsive: en móvil la tarjeta apila verticalmente */
+@media (max-width: 768px) {
+    .login-card {
+        flex-direction: column;
+        min-height: auto;
+        border-radius: 20px;
+    }
+
+    .login-brand {
+        padding: 25px 15px;
+    }
+
+    .login-brand img {
+        width: 180px;
+        height: 180px;
+    }
+
+    .login-brand-title {
+        font-size: 32px;
+    }
+
+    .login-brand-subtitle {
+        font-size: 24px;
+    }
+
+    .login-form {
+        padding: 25px 20px;
+    }
+
+    .login-form-heading {
+        font-size: 36px;
+    }
+}
+
+/* ============================================================
+   SIDEBAR — FIJO, ALTO COMPLETO, RESPONSIVE
+   ============================================================ */
+
+/* --- Desktop sidebar (>= 992px) --- */
+@media (min-width: 992px) {
+    /* Quitar márgenes negativos del row (evita overflow lateral con sidebar fixed) */
+    .row:has(> .bg-dark:first-child) {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    /* Sidebar fijo, fuera del flujo — no afecta la altura de la fila */
+    .row > .bg-dark:first-child {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 25%;
+        height: 100vh;
+        overflow-y: auto;
+        padding: 0;
+        z-index: 1000;
+    }
+
+    /* Contenido: ocupa el resto de la pantalla (75%) y hace scroll interno */
+    .row:has(> .bg-dark:first-child) > div:last-child {
+        flex: 0 0 75%;
+        max-width: 75%;
+        margin-left: 25%;
+        height: 100vh;
+        overflow-y: auto;
+    }
+
+    /* Quitar padding del card-body dentro del sidebar y forzar altura */
+    .row > .bg-dark:first-child .card-body {
+        padding: 0;
+        height: 100%;
+    }
+}
+
+/* --- Móvil/tablet: colapsar la columna bg-dark (el sidebar es fixed overlay),
+     el contenido ocupa 100% del ancho y tiene scroll interno --- */
+@media (max-width: 991.98px) {
+    /* Quitar márgenes negativos del row (evita overflow lateral) */
+    .row:has(> .bg-dark:first-child) {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    /* NO usar display:none — oculta el botón hamburguesa que es hijo de esta columna */
+    .row > .bg-dark:first-child {
+        flex: 0 0 0 !important;
+        max-width: 0 !important;
+        width: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible;
+    }
+
+    /* Los hijos fixed (hamburguesa, overlay, sidebar móvil) se renderizan fuera del flujo */
+    .row > .bg-dark:first-child .card-body {
+        padding: 0;
+        height: 0;
+        overflow: visible;
+    }
+
+    /* Contenido: 100% ancho, mínimo alto de ventana, scroll interno */
+    .row:has(> .bg-dark:first-child) > div:last-child {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        min-height: 100vh;
+        height: auto;
+        overflow-y: auto;
+    }
+}
+
+/* --- Contenedor flexible interno del sidebar --- */
+.sidebar-mobile,
+.sidebar-desktop {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* --- Desktop sidebar: visible en desktop, oculto en móvil --- */
+.sidebar-desktop {
+    display: flex;
+}
+
+@media (max-width: 991.98px) {
+    .sidebar-desktop {
+        display: none;
+    }
+}
+
+/* --- Mobile sidebar: oculto por defecto, visible solo en móvil --- */
+.sidebar-mobile {
+    display: none;
+}
+
+@media (max-width: 991.98px) {
+    .sidebar-mobile {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 280px;
+        height: 100vh;
+        z-index: 1050;
+        background-color: #333333;
+        padding: 15px 0;
+        transition: left 0.3s ease;
+        overflow-y: auto;
+    }
+
+    .sidebar-mobile.open {
+        left: 0;
+    }
+}
+
+/* --- Overlay (mobile) --- */
+.sidebar-overlay {
+    display: none;
+}
+
+@media (max-width: 991.98px) {
+    .sidebar-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1049;
+    }
+}
+
+/* --- Botón hamburguesa --- */
+.hamburger-btn {
+    display: none;
+}
+
+@media (max-width: 991.98px) {
+    .hamburger-btn {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        width: 44px;
+        height: 44px;
+        z-index: 1060;
+        background-color: rgba(51, 51, 51, 0.9);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        cursor: pointer;
+        padding: 10px 8px;
+        transition: background-color 0.2s;
+    }
+
+    .hamburger-btn:hover {
+        background-color: rgba(51, 51, 51, 1);
+    }
+
+    .hamburger-btn span {
+        display: block;
+        width: 100%;
+        height: 3px;
+        background: white;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+        transform-origin: center;
+    }
+
+    .hamburger-btn span + span {
+        margin-top: 5px;
+    }
+
+    /* Animación hamburguesa → X */
+    .hamburger-btn.open span:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+
+    .hamburger-btn.open span:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+    }
+
+    .hamburger-btn.open span:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+}
+
+/* --- Logo --- */
+.sidebar-logo-link {
+    display: block;
+    text-align: center;
+    padding: 20px 0 30px;
+}
+
+.sidebar-logo {
+    max-width: 150px;
+    height: auto;
+    transition: opacity 0.2s;
+}
+
+.sidebar-logo:hover {
+    opacity: 0.85;
+}
+
+/* --- Lista de navegación — centrada --- */
+.sidebar-nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.sidebar-nav-item {
+    padding: 0;
+}
+
+/* --- Cada link del sidebar: centrado, sin agrandarse --- */
+.sidebar-link {
+    display: block;
+    padding: 12px 16px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 22px;
+    text-align: center;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+/* Hover: solo oscurecer el fondo, nada más */
+.sidebar-link:hover {
+    background-color: rgba(0, 0, 0, 0.25);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 22px;
+    text-decoration: none;
+}
+
+/* Link activo: fondo ligeramente rojizo */
+.sidebar-link.active {
+    background-color: rgba(221, 24, 24, 0.2);
+    color: #fff;
+}
+
+/* --- Cerrar sesión: siempre abajo, con fondo rojo --- */
+.sidebar-logout {
+    padding: 10px 20px 20px;
+    margin-top: auto;
+}
+
+.sidebar-logout-btn {
+    background-color: #dd1818;
+    border: 2px solid #dd1818;
+    color: white;
+    font-size: 20px;
+    font-family: inherit;
+    padding: 10px 0;
+    width: 100%;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    display: block;
+}
+
+.sidebar-logout-btn:hover {
+    background-color: #b01313;
+    border-color: #b01313;
+    box-shadow: 0 2px 8px rgba(221, 24, 24, 0.4);
+}
+
+/* ============================================================
+   DASHBOARD HERO — Imagen de fondo + overlay 70%
+   ============================================================ */
+
+/* Hero: imagen de fondo con altura generosa */
+.dashboard-hero {
+    position: relative;
+    min-height: 63vh;
+    background-image: url('/img/3.png');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Overlay negro al 70% */
+.dashboard-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+}
+
+/* Contenido del hero (encima del overlay) — centrado */
+.dashboard-hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: white;
+    padding: 20px;
+}
+
+.dashboard-hero-title {
+    font-size: 48px;
+    font-weight: 700;
+    margin: 0 0 5px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.dashboard-hero-welcome {
+    font-size: 28px;
+    margin: 0;
+    opacity: 0.95;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.dashboard-hero-welcome strong {
+    color: #dd1818;
+}
+
+/* Zona de cards — con espacio alrededor */
+.dashboard-cards {
+    flex: 1;
+    padding: 20px 15px 15px;
+}
+
+/* En móvil */
+@media (max-width: 575.98px) {
+    .dashboard-hero {
+        min-height: 30vh;
+    }
+
+    .dashboard-hero-title {
+        font-size: 28px;
+    }
+
+    .dashboard-hero-welcome {
+        font-size: 18px;
+    }
+}
+
+/* Utilidades */
+.bg-fvk-dark {
+    background-color: #333333;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Ajustes para tablas responsive */
+.table-fvk th {
+    background-color: #343a40;
+    color: white;
+}
